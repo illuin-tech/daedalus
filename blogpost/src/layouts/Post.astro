@@ -29,6 +29,7 @@ const num = (i: number) => String(i).padStart(2, "0");
     <meta name="description" content={description} />
     <meta name="color-scheme" content="light dark" />
     <title>{title}</title>
+    <link rel="icon" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/favicon.ico`} sizes="any" />
     <link rel="preload" href={regularFont} as="font" type="font/woff2" crossorigin />
     <script is:inline>
       // Before first paint, so a saved theme never flashes the other one.
