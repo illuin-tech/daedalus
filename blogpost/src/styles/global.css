@@ -658,12 +658,12 @@ figcaption { font-size: 12.5px; color: var(--muted); margin: 0.2rem 0 0; }
   .pipeline { padding: 1.4rem 0.9rem 0.8rem; }
   .pl-bar { margin-left: 0; width: 100%; }
   /* Phones: the explanation scrolls in a fixed-height area (back to the top on every step),
-     fading out at the bottom so the cut reads as "more below". */
+     fading out at the bottom so the cut reads as "more below". Once it reaches either end, a
+     swipe on it scrolls the page (no overscroll-behavior: contain, which trapped the finger). */
   .pl-now {
     display: block;
     height: min(22rem, 55vh);
     overflow-y: auto;
-    overscroll-behavior: contain;
     padding-bottom: 1.6rem;
     -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 1.6rem), transparent);
     mask-image: linear-gradient(to bottom, #000 calc(100% - 1.6rem), transparent);

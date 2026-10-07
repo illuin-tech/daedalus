@@ -41,6 +41,7 @@ export function axis(t: Tokens, title: string, extra: Record<string, unknown> = 
     tickfont: { size: narrow ? 10 : 11.5, color: t.muted },
     gridcolor: t.rule, griddash: "dot", zeroline: false,
     showline: true, mirror: true, linecolor: t.ruleStrong, linewidth: 1, ticks: "",
+    fixedrange: true,  // no zoom or pan by dragging an axis either (see dragmode in baseLayout)
     ...extra,
   };
 }
@@ -51,6 +52,9 @@ export function baseLayout(t: Tokens, narrow: boolean, extra: Record<string, unk
     font: { family: t.font, color: t.ink },
     margin: narrow ? { l: 46, r: 8, t: 8, b: 46 } : { l: 58, r: 14, t: 10, b: 52 },
     hovermode: "closest",
+    // No drag to zoom or pan: Plotly would otherwise take every touch on the plot (it calls
+    // preventDefault on touchstart), so swiping over a chart on a phone could not scroll the page.
+    dragmode: false,
     hoverlabel: { bgcolor: t.ink, bordercolor: t.ink, font: { family: t.font, size: 12, color: t.bg } },
     showlegend: false,
     ...extra,
