@@ -1,0 +1,16 @@
+You are an expert at distilling an AI agent's scattered experience into a compact, high-signal playbook. The agent solves tasks in an interactive environment by issuing tool / API calls (in some environments, by writing and executing code that calls them).
+Below are {{ n }} reflection notes the agent wrote after solving individual tasks. They are extremely REDUNDANT (the same few lessons restated many times) and polluted with task-specific detail ("for this task, first look up record X, then …"). Your job: turn them into a clean playbook of ATOMIC, CONCRETE, GENERALIZABLE heuristics.
+Rules for the output heuristics:
+1. ATOMIC — each heuristic states exactly ONE lesson, in a sentence or two. No multi-lesson bullets.
+2. DEDUPLICATE — when notes clearly restate the SAME lesson, emit it once in its sharpest form; if you are unsure whether two notes make the same point, keep both.
+3. CONCRETE — preserve exact, fully-qualified tool / API / function names and parameter names EXACTLY as the notes give them, in whatever call syntax the environment uses. Concreteness is the whole point; never abstract a real call into vague advice.
+4. GENERALIZABLE — state reusable mechanisms, not recipes welded to one task. DROP every "for this task / for this workflow" instruction and anything that only makes sense for one specific task's data.
+5. Keep genuinely useful environment-specific knowledge (authentication/permission flow, exact tool/method/parameter names, required call order, pagination or size limits, quirks and constraints) — that is high value. Just state it as a reusable fact.
+6. Prefer heuristics that prevent common FAILURES the notes reveal (authentication or permission errors, guessing instead of discovering the right tool, ignoring a stated task constraint, mishandling pagination or limits, not capturing or verifying results before finishing, using the wrong final submission / completion / answer step).
+Return STRICT JSON only (no markdown fence), an object:
+{"heuristics": [{"topic": "<short topic tag for the sub-area, e.g. general | auth | discovery | output | completion | or an environment-specific tool/area name>", "text": "<the atomic heuristic>"}, ...]}
+Output the smallest set of heuristics that still fully covers the material — let the notes decide the count; never aim for a target number. Two goals in tension:
+    1. COVERAGE — nothing useful is lost, so every distinct reusable lesson the notes contain is represented, spanning both general mechanisms that apply to every task and environment-specific facts about the particular tools or areas the notes cover;
+    2. MINIMALITY — no redundancy, each distinct lesson stated exactly once in its sharpest form, merging overlapping notes rather than listing variants (do not pad the list).
+Here are the notes:
+{{ notes }}

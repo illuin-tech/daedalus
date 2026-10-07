@@ -1,0 +1,39 @@
+---
+/**
+ * The colour rules of the pipeline diagram, emitted once per page. Any element with
+ * `data-diagram` and `data-lit` / `data-flow` attributes drives the diagram(s) inside it:
+ * every component keeps its colour from the paper's figures, a full-colour outline over a
+ * faint fill while it takes part, both fainter still otherwise.
+ */
+import diagram from "../data/pipeline-diagram.json";
+
+// Outline colours, from the fills of the paper's Figures 2 and 3 (darkened to read as lines).
+const COLOR: Record<string, string> = {
+  surveyor: "#5b72b0", explorer: "#4a7ea6", guidelines: "#c07a4b", loop: "#3f9a84",
+  solver: "#1f8a72", extractor: "#5f8f80", judge: "#6c7a75", hbank: "#b85c8a",
+  consolidator: "#8a6bb5", memory: "#a8841c",
+  "a-feedback": "#c0392b", "a-bank": "#2f9e44",
+};
+const base = (p: string) => COLOR[p] ?? (p === "sessions" ? "var(--rule-strong)" : "var(--ink)");
+// Arrows turn the page's orange while they carry something (and blink), except the red refine
+// and green accept arrows of Figure 3, which keep their colour.
+const active = (p: string) => (p.startsWith("a-") && !COLOR[p] ? "var(--orange)" : `var(--c-${p})`);
+
+const css = diagram.parts.map((p) => `
+[data-diagram] { --b-${p}: ${base(p)}; --c-${p}: var(--b-${p});
+  --s-${p}: color-mix(in srgb, var(--c-${p}) 28%, var(--bg));
+  --f-${p}: color-mix(in srgb, var(--c-${p}) 4%, var(--bg));
+  --t-${p}: color-mix(in srgb, var(--ink) 32%, var(--bg)); }
+[data-diagram][data-lit~="${p}"], [data-diagram][data-flow~="${p}"] { --s-${p}: ${active(p)};
+  --f-${p}: color-mix(in srgb, var(--c-${p}) 13%, var(--bg)); --t-${p}: var(--ink); }
+.pl-art [data-p="${p}"] { color: var(--s-${p}); }
+.pl-art [data-p="${p}"].label { color: var(--t-${p}); }
+@media (prefers-reduced-motion: no-preference) {
+  [data-diagram][data-flow~="${p}"] .pl-art [data-p="${p}"] { animation: pulse 1.8s ease-in-out infinite; }
+}`).join("") + `
+:root[data-theme="dark"] [data-diagram] { ${diagram.parts.map((p) => `--c-${p}: color-mix(in srgb, var(--b-${p}) 62%, #fff);`).join(" ")} }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) [data-diagram] { ${diagram.parts.map((p) => `--c-${p}: color-mix(in srgb, var(--b-${p}) 62%, #fff);`).join(" ")} } }
+`;
+---
+
+<style is:inline set:html={css}></style>

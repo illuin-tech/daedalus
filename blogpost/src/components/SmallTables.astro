@@ -1,0 +1,49 @@
+---
+/** Tables A1 and A2: the judge, and the auxiliary model. Table 4 is Injection.astro. */
+import { AUX, JUDGE } from "../data/tables";
+
+interface Props { which: "judge" | "aux" }
+const { which } = Astro.props;
+const f3 = (x: number) => x.toFixed(3).replace(/^0/, "");
+---
+
+{which === "judge" && (
+  <figure class="box tbl tbl-small">
+    <span class="label"><b>table A1</b><span class="long"> the LLM judge against the official verifiers</span></span>
+    <div class="t-wrap">
+      <table class="t">
+        <thead><tr><th></th><th>N</th><th class="first">precision</th><th>recall</th><th>κ bench</th><th>κ inter</th></tr></thead>
+        <tbody>
+          {JUDGE.map((r) => (
+            <tr><td>{r.bench}</td><td>{r.n}</td><td class="first">{f3(r.precision)}</td><td>{f3(r.recall)}</td><td>{f3(r.kbench)}</td><td>{f3(r.kinter)}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <figcaption>
+      Success counts as positive. κ bench: agreement with the benchmark's verifier; κ inter:
+      agreement between five judge calls on the same trajectory.
+    </figcaption>
+  </figure>
+)}
+
+{which === "aux" && (
+  <figure class="box tbl tbl-small">
+    <span class="label"><b>table A2</b><span class="long"> a smaller model for every auxiliary agent</span></span>
+    <div class="t-wrap">
+      <table class="t">
+        <thead><tr><th>auxiliary model</th><th class="first">MSR<span class="muted">↑</span></th><th>pass^5<span class="muted">↑</span></th><th>gen. $<span class="muted">↓</span></th></tr></thead>
+        <tbody>
+          {AUX.map((r) => (
+            <tr class={r.ours ? "ours" : undefined}>
+              <td>{r.model}</td>
+              <td class="first"><span class="val">{r.msr.v.toFixed(1)}</span><span class="pm">±{r.msr.se?.toFixed(1)}</span></td>
+              <td><span class="val">{r.pass5.v.toFixed(1)}</span><span class="pm">±{r.pass5.se?.toFixed(1)}</span></td>
+              <td>{r.gen === 0 ? "–" : `$${r.gen.toFixed(1)}`}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </figure>
+)}

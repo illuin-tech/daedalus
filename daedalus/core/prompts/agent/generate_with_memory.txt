@@ -1,0 +1,7 @@
+Now produce your code to execute. Use the standard response format:
+
+Thought: <finalize your reasoning, incorporating any relevant memories above>
+
+```python
+<your code here>
+```

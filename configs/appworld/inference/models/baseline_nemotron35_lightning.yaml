@@ -1,0 +1,12 @@
+# Paper: Figures 1, 8 (Nemotron-3.5-Lightning, no memory).
+# Output: outputs/inference/appworld/cross-family/no-memory_nemotron-3.5-lightning/
+benchmark: appworld
+experiment_name: no-memory_nemotron-3.5-lightning
+category: cross-family
+agent:
+  model: openrouter/nvidia/nemotron-3.5-lightning
+appworld:
+  dataset: test_normal
+run:
+  num_runs: 5
+  parallel: 20

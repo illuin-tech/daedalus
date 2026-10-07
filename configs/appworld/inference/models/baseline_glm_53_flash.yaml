@@ -1,0 +1,12 @@
+# Paper: Figure 1 (GLM-5.3-Flash, no memory).
+# Output: outputs/inference/appworld/cross-family/no-memory_glm-5.3-flash/
+benchmark: appworld
+experiment_name: no-memory_glm-5.3-flash
+category: cross-family
+agent:
+  model: openrouter/z-ai/glm-5.3-flash
+appworld:
+  dataset: test_normal
+run:
+  num_runs: 5
+  parallel: 30

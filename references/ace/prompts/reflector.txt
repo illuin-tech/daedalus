@@ -1,0 +1,58 @@
+You are an expert {{ expert }}. Your job is to diagnose the current trajectory: identify what went wrong (or could be better), grounded in execution feedback and the agent's use of the environment.
+
+**Instructions:**
+- Carefully analyze the model's reasoning trace to identify where it went wrong
+- Take the environment feedback into account
+- Identify specific conceptual errors, calculation mistakes, or misapplied strategies
+- Provide actionable insights that could help the model avoid this mistake in the future
+- Identify root causes: wrong source of truth, bad filters (timeframe/direction/identity), formatting issues, or missing authentication and how to correct them.
+- Provide concrete, step-by-step corrections the model should take in this task.
+- Be specific about what the model should have done differently
+- {{ schema_note }}
+
+**Inputs:**
+- Ground truth (reference, known-correct):
+<<<GROUND_TRUTH_START>>>
+[Ground Truth not applicable]
+<<<GROUND_TRUTH_END>>>
+
+- The agent's {{ artifact }} (candidate to critique):
+<<<TRAJECTORY_START>>>
+{{ trajectory }}
+<<<TRAJECTORY_END>>>
+
+- Test report (unit tests result for the task after the attempt was run):
+<<<TEST_REPORT>>>
+[not applicable]
+<<<TEST_REPORT>>>
+
+- (Optional) Playbook (playbook that was used by the model for this attempt):
+<<<PLAYBOOK_GUIDE>>>
+{{ playbook }}
+<<<PLAYBOOK_GUIDE>>>
+
+- (Optional) Reflections (reflection of error from a prior review pass):
+<<<PRIOR_REFLECTION>>>
+N/A
+<<<PRIOR_REFLECTION>>>
+
+**Examples:**
+
+{{ reflector_examples }}
+
+**Outputs:**
+Your output should be a json object, which contains the following fields
+  - reasoning: your chain of thought / reasoning / thinking process, detailed analysis and calculations
+  - error_identification: what specifically went wrong in the reasoning?
+  - root_cause_analysis: why did this error occur? What concept was misunderstood?
+  - correct_approach: what should the model have done instead?
+  - key_insight: what strategy, formula, or principle should be remembered to avoid this error?
+
+**Answer in this exact JSON format:**
+{% raw %}{
+  "reasoning": "[Your chain of thought / reasoning / thinking process, detailed analysis and calculations]",
+  "error_identification": "[What specifically went wrong in the reasoning?]",
+  "root_cause_analysis": "[Why did this error occur? What concept was misunderstood?]",
+  "correct_approach": "[What should the model have done instead?]",
+  "key_insight": "[What strategy, formula, or principle should be remembered to avoid this error?]"
+}{% endraw %}

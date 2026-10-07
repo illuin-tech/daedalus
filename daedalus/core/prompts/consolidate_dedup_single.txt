@@ -1,0 +1,14 @@
+Below is a list of heuristics an AI agent wrote down while working in one environment. Each line is one lesson, and the same lesson often appears several times in different words.
+
+Remove the duplicates:
+- Keep every line whose lesson appears only once, copied word for word.
+- When several lines say the same thing, keep only the one with the most detail.
+- If you are unsure whether two lines are the same lesson, keep both.
+
+Do not rewrite, shorten, merge, reorder or summarise anything. Nearly every line should survive.
+
+Return STRICT JSON only (no markdown fence):
+{"items": ["<line, verbatim>", ...]}
+
+The list ({{ n }} heuristics):
+{{ items }}

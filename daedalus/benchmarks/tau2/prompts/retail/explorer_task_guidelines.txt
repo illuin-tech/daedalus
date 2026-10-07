@@ -1,0 +1,74 @@
+{% from "generation/task_doctrine.txt" import write_a_request, goal_not_procedure, short_to_state, scope_wording, grounding %}
+{% set short_example -%}
+"return
+everything from my last order that still qualifies" is one clause and several items to check
+against the policy{%- endset %}
+{% set ground_example -%}
+Never pin the particular route the agent happened to take, or the exact wording it used.{%- endset %}
+
+## What a good task looks like in this environment
+
+Here the task is a customer's request, relayed to a support agent who must serve it within the
+domain policy. What belongs here is what a real customer would say — a want, a complaint, a
+question — not an internal work order.
+
+{{ write_a_request() }}
+
+{{ goal_not_procedure("the customer", "tool", "agent") }}
+
+**Leak nothing the agent could look up.** You have just spent turns discovering real order ids,
+item ids, emails, prices and statuses. Rediscovering them is the work you are setting, so keep
+them out of the request. A customer says "my last order", "the boots I bought last month", "the
+cheaper one" — not an order id or an item sku. State a literal only when the customer genuinely
+supplies it from outside: a new address they are giving you, the exact wording they want, a
+budget they have decided. The test for every value: *could the agent find this by looking it
+up?* If yes, take it out.
+
+**Let difficulty come from the gap between what the customer says and what is allowed.** The
+strongest requests are the ones whose naive, literal reading is WRONG — part of what is asked is
+limited or forbidden by the policy, so the correct handling is a partial fulfilment, a
+substitution, or a refusal with an explanation. Under-determined goals, one narrow correct target
+among close alternatives, and choices that constrain each other are the other sources. Never
+make difficulty out of the customer being rude, impatient, or changing their mind — a capable
+agent absorbs that in a turn. And do not manufacture it by piling on more steps.
+
+{{ short_to_state(short_example, "work", "agent", verb="checked") }}
+
+{{ scope_wording('"the most expensive"', '"all of them"', '"the order I placed last month"') }}
+
+**Vary the genre deliberately** — over a run these should all appear:
+
+- a request the agent must first work out the eligibility of — what is permitted, what it would
+  cost, which variant applies — and then carry out only the permitted part;
+- a single change carried out end to end and verified;
+- a request touching several records or account-level settings that must stay consistent;
+- a request whose correct handling under policy is a partial fulfilment;
+- a request whose headline ask the policy forbids, where the correct handling is to decline that
+  part and carry out the permitted alternative instead;
+- a question, where what the customer wants is to be told something they cannot see themselves —
+  what they were charged, what an item is made of, why the thing they asked for is not allowed.
+
+A run of nothing but successful single changes has covered a fraction of what the agent meets. A
+question is not a lesser task here: the attempt is scored on the database at the end AND on what the
+agent said, so a request whose correct outcome is that nothing changed is perfectly gradable —
+name the value the agent has to state, and it is checked. What does not work is a task with neither:
+nothing changed and nothing checkable said.
+
+**Write the customer, not just the request.** You are scripting someone who will be role-played
+live, and how they behave decides how hard the task is. Two levers matter more than anything else
+in the wording of the request:
+
+*What they volunteer.* A customer who answers every question fully hands the work back to the
+agent. Say how much they give up and when — "you answer what you are asked and nothing more", "you
+do not mention the second order unless the agent asks whether there are others". This is the
+difference between a task the agent must solve and a task the agent can simply ask its way out of:
+if the customer is holding the answer and will recite it on request, there is no task left.
+
+*How they react.* Give them at least one turn that fires on what the agent says or discovers, and
+write it so it only fires then — a real customer does not pre-announce their fallback. "If the agent
+tells you that variant is unavailable, you will take the other leather one." "If the agent asks you
+to confirm, you change your mind and keep it." "You are only satisfied once the replacement is
+actually reserved." Difficulty that lives in the customer's reactions cannot be short-circuited,
+because the agent has to reach the branch before it learns the branch exists.
+
+{{ grounding("success conditions", ground_example) }}

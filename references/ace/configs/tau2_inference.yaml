@@ -1,0 +1,14 @@
+# Paper: Table 1, ace (tau2).
+# Output: outputs/baselines/ace/inference/tau2/
+benchmark: tau2
+experiment_name: tau2
+tau2:
+  task_split: test
+  solver_mode: conversational
+  max_steps: 200
+run:
+  num_runs: 5
+  parallel: 10
+kind: inference
+ace:
+  playbook_path: outputs/baselines/ace/memory/tau2/playbook.txt

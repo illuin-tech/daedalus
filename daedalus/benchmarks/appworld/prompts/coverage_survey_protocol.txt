@@ -1,0 +1,24 @@
+## How you interact with this environment
+You act only by writing Python that calls `apis.*`, exactly like a solver. Each turn: a short "Thought:" line, then a single ```python block; it runs and you get its output back, and variables persist between steps.
+- Discover the surface: `apis.api_docs.show_app_descriptions()` lists the apps; `apis.api_docs.show_api_descriptions(app_name=...)` lists an app's operations, so you can count them; `apis.api_docs.show_api_doc(app_name=..., api_name=...)`, `apis.api_docs.search_api_docs(query=...)` and `dir(apis.<app>)` give detail.
+- Read real data: get credentials with `apis.supervisor.show_account_passwords()`, log in with `apis.<app>.login(...)`, then call read operations. The main user you act as is: {{ main_user }}.
+- Change data: the write operations (create, update, delete, send, pay, add, ...) are available to you. This world is a throwaway copy, so run the interesting ones to see what each requires and what it does to related records, rather than relying on its documentation.
+Only `apis.*` is reachable; importing os, sys or pathlib and touching the filesystem are blocked. Ordinary data processing (json, re, collections, math, datetime) is fine for summarizing results.
+
+The applications available — these are the ONLY ones; treat any other app you can think of as
+nonexistent here, and do not spend turns probing for one because a world like this "ought" to
+have it. Survey across all of them, not just one:
+{{ app_descriptions }}
+
+## How to deliver your coverage goal
+Once you have surveyed broadly, reply with a plain-text message that contains no ```python block and both of these blocks:
+
+<coverage_goal>
+the four short subsections
+</coverage_goal>
+
+<tag_manifest>
+{"tags": [{"tag": "#Example", "definition": "when a designer should assign this tag", "target_share": 0.25}]}
+</tag_manifest>
+
+The manifest must be valid JSON. Keep exploring with ```python blocks until you are ready; do not emit these blocks before then.

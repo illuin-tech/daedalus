@@ -1,0 +1,62 @@
+{
+ "source": {
+  "script": "plots/scripts/generation_compare.py outputs/generation/appworld_90sessions outputs/generation/appworld_90sessions_no_survey outputs/generation/appworld_90sessions_no_survey_no_expl_guideline",
+  "outputs": [
+   "outputs/generation/appworld_90sessions",
+   "outputs/generation/appworld_90sessions_no_survey",
+   "outputs/generation/appworld_90sessions_no_survey_no_expl_guideline"
+  ]
+ },
+ "y": {
+  "label": "Cost",
+  "unit": "$"
+ },
+ "roles": [
+  "explorer",
+  "solver",
+  "judge",
+  "extraction"
+ ],
+ "bars": [
+  {
+   "label": "No survey, no guidelines",
+   "tag": "(D)",
+   "run": "outputs/generation/appworld_90sessions_no_survey_no_expl_guideline",
+   "roles": {
+    "explorer": 84.72,
+    "solver": 47.02,
+    "judge": 60.73,
+    "extraction": 17.53
+   },
+   "total": 210.01,
+   "note": "25858 calls @ standard"
+  },
+  {
+   "label": "No survey",
+   "tag": "(E)",
+   "run": "outputs/generation/appworld_90sessions_no_survey",
+   "roles": {
+    "explorer": 80.13,
+    "solver": 33.69,
+    "judge": 51.19,
+    "extraction": 19.92
+   },
+   "total": 184.94,
+   "note": "24393 calls @ standard, INCOMPLETE"
+  },
+  {
+   "label": "Daedalus",
+   "tag": "(F)",
+   "run": "outputs/generation/appworld_90sessions",
+   "roles": {
+    "explorer": 56.02,
+    "solver": 19.35,
+    "judge": 24.64,
+    "extraction": 9.35
+   },
+   "total": 109.36,
+   "note": "12137 calls @ standard, INCOMPLETE; roles rebuilt from traces + session costs; agent split estimated (see _agent_cost); migrated solver-only"
+  }
+ ],
+ "note": "raw $ per run: every call at standard tier, full prompt caching (paper_cost.cost_per_run); consolidation omitted"
+}

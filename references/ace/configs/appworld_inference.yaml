@@ -1,0 +1,12 @@
+# Paper: Table 1, ace (appworld).
+# Output: outputs/baselines/ace/inference/appworld/
+benchmark: appworld
+experiment_name: appworld
+appworld:
+  dataset: test_normal
+run:
+  num_runs: 5
+  parallel: 10
+kind: inference
+ace:
+  playbook_path: outputs/baselines/ace/memory/appworld/playbook.txt

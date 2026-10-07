@@ -1,0 +1,14 @@
+# Paper: Figure 6; Table 7.
+# Output: outputs/inference/appworld/exploration-budget/140-sessions_hierarchical/
+benchmark: appworld
+experiment_name: 140-sessions_hierarchical
+category: exploration-budget
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld_140-sessions/iterative_consolidated_pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 40

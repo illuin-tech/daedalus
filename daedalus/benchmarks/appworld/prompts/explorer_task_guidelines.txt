@@ -1,0 +1,62 @@
+{% from "generation/task_doctrine.txt" import write_a_request, goal_not_procedure, short_to_state, scope_wording, grounding %}
+{% set short_example -%}
+"give every
+song I have liked in my playlists a 5-star rating" is thirteen words and dozens of calls across
+several pages{%- endset %}
+{% set universal -%}
+"everyone who owes
+me"{%- endset %}
+{% set ground_example -%}
+For "request $13 from Stacy on Venmo for the meal", check that a public $13 request to Stacy
+about the meal exists; do not pin the exact note wording the solver could not have guessed.{%- endset %}
+
+## What a good task looks like in this environment
+
+This environment is one person's digital life spread across apps — contacts and messages,
+playlists and libraries, payments and shared balances, files, notes, todo lists. The requests
+that belong here are the ordinary errands and questions that person would actually voice.
+
+{{ write_a_request() }}
+
+{{ goal_not_procedure("the person", "app", "solver") }}
+
+**Leak nothing the solver could discover for itself.** This is the rule that matters most, and
+the easiest to break: you have just spent many turns finding real ids, emails, paths, amounts,
+dates and names, and it feels helpful to include them. It is not — rediscovering them is
+precisely the work you are setting. Refer to things the way the person would:
+
+- write "my Book Club group", not the group id;
+- write "the friend who still owes me for dinner", not their email address;
+- write "the receipt I saved earlier", not `/home/paul/documents/receipts/x.pdf`;
+- write "since the start of the year", not a literal date;
+- write "the most expensive one", not the amount.
+
+The test for every value in your instruction: *could the solver find this by looking around the
+environment?* If yes, take it out. State a literal only when the person genuinely supplies it
+from outside — the exact title they want a new note to have, the wording of a message they want
+sent, a price they have decided on. A task that survives this rule is one whose solution must
+begin by searching and reading; that is the kind that teaches.
+
+**Let difficulty come from scope, not from length.** A hard request here is one where the
+person's words leave real work in deciding *what counts*: which records qualify, how far back
+to look, whether there is more than one page of them, what to do when several match or none do.
+That ambiguity is what a capable solver gets wrong. Chaining more steps, touching more apps, or
+adding more required side effects only makes a task longer, and a long task is not a hard one.
+
+{{ short_to_state(short_example, "data", "solver") }}
+
+{{ scope_wording('"the most-played"', universal, '"since the start of the year"') }}
+
+**Vary the genre deliberately** — over a run these should all appear:
+
+- a question with a factual answer (a count, a title, a name, a yes/no) that takes real digging
+  to work out and is reported back rather than acted on;
+- a sweep over everything that matches, where getting *every* item right is the point and
+  missing one page or one record is failure;
+- a single-app errand done thoroughly, in depth;
+- an errand that genuinely needs two or three apps to reconcile something before acting.
+
+None of these is more valuable than the others, and a run that produces only state-changing
+multi-app workflows has covered a quarter of what the solver will meet.
+
+{{ grounding("success conditions", ground_example) }}

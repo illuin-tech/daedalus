@@ -1,0 +1,20 @@
+# Paper: Table 1 DAEDALUS bank (AutomationBench).
+# Output: outputs/daedalus/automationbench/
+benchmark: automationbench
+experiment_name: automationbench
+agent:
+  model: gpt-5.6-luna
+  reasoning_effort: medium
+automationbench:
+  split_file: daedalus/benchmarks/automationbench/splits/operations_30_70.json
+  split: train
+accumulation:
+  extraction_model: gpt-5.6-terra
+  extraction_reasoning_effort: high
+generation:
+  explorer_model: gpt-5.6-terra
+  judge_model: gpt-5.6-terra
+  num_sessions: 30
+  coverage_tags_max_turns: 50
+run:
+  parallel: 16

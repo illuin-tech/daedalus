@@ -1,0 +1,18 @@
+# Paper: Table 1 PREPING (τ²), with the playbook built by gpt-5.4 (paper Section 4).
+# Rebuilt from the launch config (preping_retail_atstart_cap200_gpt54aux.yaml); it matches
+# the run snapshot.
+# Output: outputs/inference/tau2/main-results/preping/
+benchmark: tau2
+experiment_name: preping
+category: main-results
+tau2:
+  task_split: test
+  solver_mode: conversational
+  max_steps: 200
+memory:
+  enabled: true
+  pool_path: outputs/baselines/preping/memory/tau2/pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 20

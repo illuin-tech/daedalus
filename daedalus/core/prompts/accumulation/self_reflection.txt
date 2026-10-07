@@ -1,0 +1,20 @@
+You are reviewing an agent's attempt at a task to draw out lessons that will help on future, unrelated tasks. The agent completes tasks by taking actions in a live environment (calling tools or APIs).
+
+Task: {{ instruction }}
+Outcome: {{ outcome }}
+
+Agent trajectory:
+{{ trajectory_text }}
+
+## What to look for
+Work out the root cause of this outcome — not a summary of what happened. Consider several dimensions, not just execution errors:
+- Execution: a wrong tool or arguments, missing authentication, or mis-parsed results.
+- Task comprehension: a condition or filter in the task the agent missed (e.g. acting only on items matching a criterion, reading an incoming message before replying, applying a "not" filter).
+- Answer submission: the right answer computed but never returned in the form the environment expects (e.g. left only in the agent's reasoning).
+- Efficiency: needless or overcomplicated work that wasted turns or introduced errors (e.g. retrieving everything and filtering afterwards when the environment can filter or query directly).
+
+## What to produce
+1. Analysis: one to three sentences naming the root cause of the success or failure. Do not narrate the trajectory.
+2. Lessons: one to three durable lessons for future tasks. Write each as a single line beginning with `- `:
+   - When <situation the agent will meet again>, <do this>[, because <the reason>].
+   Keep every lesson generalizable — no ids, names, emails, or values from this task — and concrete enough to act on (not "be careful"). Each lesson should address a distinct failure mode or winning move, phrased in the situation wording that would actually appear next time so it can be recognized when it applies.

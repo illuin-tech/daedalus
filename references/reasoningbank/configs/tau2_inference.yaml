@@ -1,0 +1,15 @@
+# Paper: Table 1, reasoningbank (tau2), rerun with gpt-5.4 for every auxiliary role (paper Section 4).
+# Rebuilt from the launch config (tau2_inference_cap200_gpt54aux.yaml); it matches the run snapshot.
+# Output: outputs/baselines/reasoningbank/inference/tau2/
+benchmark: tau2
+experiment_name: tau2
+tau2:
+  task_split: test
+  solver_mode: conversational
+  max_steps: 200
+run:
+  num_runs: 5
+  parallel: 20
+kind: inference
+reasoningbank:
+  bank_path: outputs/baselines/reasoningbank/memory/tau2/pool.json

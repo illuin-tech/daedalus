@@ -1,0 +1,73 @@
+---
+/**
+ * Table 3 as a stepper: each step adds one component to the generation pipeline. The diagram
+ * lights up everything present so far (the newly added arrows blink), and the table fills in
+ * row by row. Steps are driven by scripts/stepper.ts.
+ */
+import DiagramArt from "./DiagramArt.astro";
+import diagram from "../data/pipeline-diagram.json";
+import { ABLATION, ABLATION_BASELINE as BASE } from "../data/tables";
+
+let parts: string[] = [];
+const steps = ABLATION.map((r) => {
+  parts = [...parts, ...r.adds, ...r.arrows];
+  return { lit: [...parts], flow: r.arrows.length ? r.arrows : r.adds };
+});
+const bar = (v: number) => "█".repeat(Math.round(v / 5));
+const money = (x?: number) => (x === undefined ? "–" : `$${x.toFixed(1)}`);
+---
+
+<figure class="box wide ab" data-stepper data-diagram data-steps={JSON.stringify(steps)} tabindex="0"
+  aria-label="Cumulative ablation of the generation pipeline. Use the left and right arrow keys to add or remove a component.">
+  <span class="label"><b>table 3</b><span class="long"> cumulative ablation of the generation pipeline</span></span>
+
+  <div class="ab-grid" style={`--chars:${diagram.width}`}>
+    <DiagramArt />
+
+    <div class="ab-side">
+      <div class="ab-notes" aria-live="polite">
+        {ABLATION.map((r, i) => (
+          <p class={i === 0 ? "pl-detail on" : "pl-detail"} data-detail={i}>
+            <span class="pl-detail-head">({r.id}) {r.name.replace(/^\+ /, "")}</span><br /><span set:html={r.note} />
+            {r.accept !== undefined && <span class="ab-stats">{r.accept.toFixed(1)}% of sessions accepted · {r.refin} refinements</span>}
+          </p>
+        ))}
+      </div>
+      <div class="t-wrap">
+        <table class="t ab-t">
+          <thead>
+            <tr><th></th><th class="first" colspan="2">MSR<span class="muted">↑</span></th><th>pass^5<span class="muted">↑</span></th><th>gen. $<span class="muted">↓</span></th></tr>
+          </thead>
+          <tbody>
+            <tr class="ab-base">
+              <td>no memory</td><td class="first">{BASE.msr.v.toFixed(1)}</td><td class="ab-bar">{bar(BASE.msr.v)}</td>
+              <td>{BASE.pass5.v.toFixed(1)}</td><td>–</td>
+            </tr>
+            {ABLATION.map((r, i) => (
+              <tr data-row={i}>
+                <td><span class="ab-id">({r.id})</span> {r.name.replace(/^\+ /, "+ ")}</td>
+                <td class="first">{r.msr.v.toFixed(1)}</td>
+                <td class={r.msr.v < BASE.msr.v ? "ab-bar low" : "ab-bar"}>{bar(r.msr.v)}</td>
+                <td>{r.pass5.v.toFixed(1)}</td>
+                <td>{money(r.gen)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="pl-controls">
+    <button type="button" data-act="prev" aria-label="Remove a component">◀ prev</button>
+    <button type="button" data-act="play" class="pl-play">▶ play</button>
+    <button type="button" data-act="next" aria-label="Add a component">next ▶</button>
+    <span class="pl-count"><span data-count>01</span>/{String(ABLATION.length).padStart(2, "0")}</span>
+    <span class="pl-keys">or ← → keys</span>
+    <span class="pl-bar" aria-hidden="true">{ABLATION.map((r, i) => <button type="button" data-go={i} tabindex="-1">{r.id}</button>)}</span>
+  </div>
+  <figcaption>
+    AppWorld, 90 sessions for every multi-session row. gen. $: one-time generation cost; the
+    bars show MSR (red: below the no-memory baseline).
+  </figcaption>
+</figure>

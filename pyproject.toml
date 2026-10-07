@@ -1,0 +1,68 @@
+[project]
+name = "daedalus"
+version = "1.0.0"
+description = "DAEDALUS: bootstrapping agent memory from self-generated tasks (AppWorld, tau2-bench, AutomationBench)"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+dependencies = [
+    "litellm>=1.55",      # one call surface for every model provider
+    "pyyaml>=6.0",
+    "jinja2>=3.1",
+    "rank-bm25>=0.2.2",   # BM25 retriever
+    "tqdm>=4.66",
+    "tiktoken>=0.7",      # token counts for the generation-cost breakdown of pre-ledger runs
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+plots = ["matplotlib>=3.8", "scipy>=1.11"]
+# Dense retrieval (Qwen3-Embedding), lazy-imported in core/memory/retrieval.py.
+dense = ["sentence-transformers>=3.0", "faiss-cpu>=1.7"]
+
+# Benchmarks. AppWorld and tau2-bench are pinned as git references at the commits the
+# reported runs used (neither name resolves to the right project on PyPI);
+# [tool.uv.sources] below redirects both to the editable benchmarks/ submodules, because
+# tau2 reads its data/ from the source tree.
+appworld = [
+    "appworld @ git+https://github.com/StonyBrookNLP/appworld@a072b7a86e7c1d5b1d7175659d750ebb9b79f10a",
+]
+tau2 = [
+    "tau2 @ git+https://github.com/sierra-research/tau2-bench@1901a301961cbbe3fd11f3e84a2a376530c759e3",
+    "audioop-lts>=0.2.1; python_version >= '3.13'",
+]
+# AutomationBench is read from the benchmarks/AutomationBench submodule (on sys.path) rather
+# than installed, which would pull its unused `verifiers` runner; its task builders need
+# `datasets`.
+automationbench = ["datasets>=5.0.0"]
+
+all-benchmarks = ["daedalus[appworld,tau2,automationbench,dense,plots]"]
+
+[tool.uv.sources]
+appworld = { path = "benchmarks/appworld", editable = true }
+tau2 = { path = "benchmarks/tau2-bench", editable = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["daedalus"]
+
+# The appworld/tau2 extras are pinned git URLs, which hatchling rejects by default.
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.pytest.ini_options]
+# Offline unit tests only. The smoke tests (tests/smoke_*.py) make real, paid LLM calls
+# and need the benchmark checkouts; run them explicitly, e.g. `uv run pytest tests/smoke_tau2.py`.
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[tool.ruff]
+line-length = 100
+extend-exclude = ["outputs", "blogpost", "./benchmarks"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

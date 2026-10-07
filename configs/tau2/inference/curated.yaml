@@ -1,0 +1,16 @@
+# Paper: Table 1 DAEDALUS-curated (τ²).
+# Output: outputs/inference/tau2/main-results/daedalus-curated/
+benchmark: tau2
+experiment_name: daedalus-curated
+category: main-results
+tau2:
+  task_split: test
+  solver_mode: conversational
+  max_steps: 200
+memory:
+  enabled: true
+  pool_path: outputs/daedalus-curated/tau2/consolidated_pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 20

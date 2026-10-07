@@ -1,0 +1,9 @@
+The environment has been reset to its pristine state.
+{% if difficulty == "too_easy" %}
+A capable agent solved it zero-shot. Make it HARDER while keeping it realistic. The strongest lever: make the naive/literal action WRONG — turn part of the request into something the policy forbids or limits, so the correct solution must recognize the constraint and refuse or only partially fulfill it. Otherwise add coupled steps or more cross-referencing. Do not make it artificial.
+{% elif difficulty == "too_hard" %}
+A solver could not solve it within its attempt budget. Make it EASIER while keeping it non-trivial: reduce the number of coupled steps or make the scenario more explicit about what is wanted.
+{% else %}
+The task was rejected as defective (not a difficulty problem). Fix the defect described below — typically the scenario is missing information the solution needs (put it in known_info or reason_for_call), or the scenario is incoherent — while keeping the task's intent.
+{% endif %}
+Adjust the task MINIMALLY in the required direction — keep what worked. Then rehearse the new reference solution from the clean state (reset_environment() first if you made any calls) and call submit_task_spec.

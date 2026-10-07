@@ -1,0 +1,10 @@
+# Paper: Table 8 (GPT-5.4-mini, none).
+# Output: outputs/daedalus-curated/appworld_extractor-gpt-5.4-mini-no-reasoning/
+benchmark: appworld
+experiment_name: appworld_extractor-gpt-5.4-mini-no-reasoning
+appworld:
+  dataset: train
+accumulation:
+  extraction_model: gpt-5.4-mini
+run:
+  parallel: 20

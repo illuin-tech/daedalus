@@ -1,0 +1,246 @@
+---
+/**
+ * A labyrinth that writes a word. Each letter of a 3×5 pixel font is a room carved into
+ * the maze (outlined in teal); every other cell is a perfect maze (grey walls) whose
+ * solution runs between the letters from the left gate to the right one (orange).
+ * Generated at build time from a seed, so every build draws the same maze.
+ *
+ * The exit arrow is a button (`data-myth`, see Myth.astro): it takes clicks only while the
+ * maze is hovered or the button has focus, and opens the note on the myth behind the name.
+ * Its "why this name?" label, always there, blinks slowly and is clickable too.
+ *
+ * The route draws itself, stays a few seconds, fades out, and draws itself again (the script
+ * below; once only with reduced motion or without JavaScript).
+ */
+interface Props {
+  lines: string[];
+  seed: number;
+  /** Background cells around the text, and between letters / lines. */
+  margin?: number;
+  gap?: number;
+  lineGap?: number;
+  /** Target route length as a multiple of the straight crossing. */
+  route?: number;
+  /** Cell rows of the left (entry) and right (exit) gates; default: the middle row. */
+  gates?: [number, number];
+  class?: string;
+}
+
+const { lines, seed, margin = 2, gap = 1, lineGap = 1, route = 1.5, gates, class: extra = "" } = Astro.props;
+
+const FONT: Record<string, string[]> = {
+  A: ["###", "#.#", "###", "#.#", "#.#"],
+  D: ["##.", "#.#", "#.#", "#.#", "##."],
+  E: ["###", "#..", "##.", "#..", "###"],
+  L: ["#..", "#..", "#..", "#..", "###"],
+  S: ["###", "#..", "###", "..#", "###"],
+  U: ["#.#", "#.#", "#.#", "#.#", "###"],
+};
+const GW = 3, GH = 5;
+
+// ── the letter mask, on the cell grid ────────────────────────────────────
+const widest = Math.max(...lines.map((l) => l.length));
+const textW = (n: number) => n * GW + (n - 1) * gap;
+const cols = 2 * margin + textW(widest);
+const rows = 2 * margin + lines.length * GH + (lines.length - 1) * lineGap;
+const letter: boolean[][] = Array.from({ length: rows }, () => Array(cols).fill(false));
+lines.forEach((line, li) => {
+  const y0 = margin + li * (GH + lineGap);
+  const x0 = margin + Math.floor((textW(widest) - textW(line.length)) / 2);
+  [...line.toUpperCase()].forEach((ch, i) => {
+    FONT[ch]?.forEach((row, dy) => [...row].forEach((px, dx) => {
+      if (px === "#") letter[y0 + dy][x0 + i * (GW + gap) + dx] = true;
+    }));
+  });
+});
+const isLetter = (y: number, x: number) => y >= 0 && y < rows && x >= 0 && x < cols && letter[y][x];
+
+function mulberry32(a: number) {
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// Lattice of (2*rows+1) x (2*cols+1): cells at odd/odd, walls between, pillars at even/even.
+const R = 2 * rows + 1, C = 2 * cols + 1;
+const STEPS = [[0, 1], [1, 0], [0, -1], [-1, 0]] as const;
+
+function build(s: number) {
+  const open = Array.from({ length: R }, (_, r) =>
+    Array.from({ length: C }, (_, c) => r % 2 === 1 && c % 2 === 1));
+
+  // A letter is one room: open every wall between two of its cells.
+  for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+    if (!letter[y][x]) continue;
+    if (isLetter(y, x + 1)) open[2 * y + 1][2 * x + 2] = true;
+    if (isLetter(y + 1, x)) open[2 * y + 2][2 * x + 1] = true;
+  }
+
+  // Everything else is a perfect maze (recursive backtracker), one per region: the
+  // margin ring holds the maze proper, a letter's counter becomes a small closed room.
+  const rand = mulberry32(s);
+  const seen = letter.map((row) => row.slice());
+  for (let sy = 0; sy < rows; sy++) for (let sx = 0; sx < cols; sx++) {
+    if (seen[sy][sx]) continue;
+    seen[sy][sx] = true;
+    const stack: [number, number][] = [[sy, sx]];
+    while (stack.length) {
+      const [y, x] = stack[stack.length - 1];
+      const next = STEPS.map(([dy, dx]) => [y + dy, x + dx] as [number, number])
+        .filter(([ny, nx]) => ny >= 0 && ny < rows && nx >= 0 && nx < cols && !seen[ny][nx]);
+      if (!next.length) { stack.pop(); continue; }
+      const [ny, nx] = next[Math.floor(rand() * next.length)];
+      open[y + ny + 1][x + nx + 1] = true;
+      seen[ny][nx] = true;
+      stack.push([ny, nx]);
+    }
+  }
+
+  // Gates: in on the left, out on the right; BFS for the route.
+  const [gin, gout] = (gates ?? [Math.floor(rows / 2), Math.floor(rows / 2)]).map((y) => 2 * y + 1);
+  open[gin][0] = open[gout][C - 1] = true;
+  const key = (r: number, c: number) => r * C + c;
+  const prev = new Map<number, number>([[key(gin, 0), -1]]);
+  const queue: [number, number][] = [[gin, 0]];
+  while (queue.length) {
+    const [r, c] = queue.shift()!;
+    if (r === gout && c === C - 1) break;
+    for (const [dr, dc] of STEPS) {
+      const nr = r + dr, nc = c + dc;
+      if (nr < 0 || nr >= R || nc < 0 || nc >= C || !open[nr][nc] || prev.has(key(nr, nc))) continue;
+      prev.set(key(nr, nc), key(r, c));
+      queue.push([nr, nc]);
+    }
+  }
+  const order = new Map<number, number>();
+  if (prev.has(key(gout, C - 1))) {
+    const path: number[] = [];
+    for (let k = key(gout, C - 1); k !== -1; k = prev.get(k)!) path.push(k);
+    path.reverse().forEach((k, i) => order.set(k, i));
+  }
+  return { open, order, gin, gout, key };
+}
+
+// A route "weaves" each time it enters the text band between two letters. Among 2000 seeds,
+// keep the maze whose route weaves most, then the one closest to `route` × the crossing.
+const textRow = Array.from({ length: rows }, (_, y) =>
+  lines.some((_, li) => y >= margin + li * (GH + lineGap) && y < margin + li * (GH + lineGap) + GH));
+function weaves(order: Map<number, number>) {
+  const cells = [...order.entries()].sort((a, b) => a[1] - b[1]).map(([k]) => [Math.floor(k / C), k % C])
+    .filter(([r, c]) => r % 2 === 1 && c % 2 === 1).map(([r, c]) => [(r - 1) / 2, (c - 1) / 2]);
+  let runs = 0, inside = false;
+  for (const [y, x] of cells) {
+    const now = textRow[y] && x >= margin && x < cols - margin;
+    if (now && !inside) runs++;
+    inside = now;
+  }
+  return runs;
+}
+const target = route * C;
+const score = (m: ReturnType<typeof build>) => [weaves(m.order), -Math.abs(m.order.size - target)];
+let best = build(seed);
+let bestScore = score(best);
+for (let s = seed + 1; s < seed + 2000; s++) {
+  const m = build(s);
+  const sc = score(m);
+  if (sc[0] > bestScore[0] || (sc[0] === bestScore[0] && sc[1] > bestScore[1])) { best = m; bestScore = sc; }
+}
+const { open, order, gin, gout, key } = best;
+
+// ── rendering ────────────────────────────────────────────────────────────
+const cellOf = (r: number, c: number) => isLetter((r - 1) / 2, (c - 1) / 2);
+const wall = (r: number, c: number) => r >= 0 && r < R && c >= 0 && c < C && !open[r][c];
+// A wall segment outlines a letter when exactly one of the two cells it separates is one.
+const outline = (r: number, c: number) =>
+  r % 2 === 0 ? cellOf(r - 1, c) !== cellOf(r + 1, c) : cellOf(r, c - 1) !== cellOf(r, c + 1);
+const GLYPH: Record<string, string> = {
+  "0000": " ", "1100": "│", "0011": "─", "0101": "┌", "0110": "┐", "1001": "└", "1010": "┘",
+  "1101": "├", "1110": "┤", "0111": "┬", "1011": "┴", "1111": "┼",
+  "1000": "╵", "0100": "╷", "0010": "╴", "0001": "╶",
+};
+
+// The soft fill inside the letters: each character gets the quarters (top-right, bottom-right,
+// bottom-left, top-left) that lie inside a letter, so the fill meets the walls exactly.
+function quarters(r: number, c: number): [boolean, boolean, boolean, boolean] {
+  if (r % 2 === 1 && c % 2 === 1) { const f = cellOf(r, c); return [f, f, f, f]; }
+  if (r % 2 === 0 && c % 2 === 1) { const t = cellOf(r - 1, c), b = cellOf(r + 1, c); return [t, b, b, t]; }
+  if (r % 2 === 1 && c % 2 === 0) { const L = cellOf(r, c - 1), Rt = cellOf(r, c + 1); return [Rt, Rt, L, L]; }
+  return [cellOf(r - 1, c + 1), cellOf(r + 1, c + 1), cellOf(r + 1, c - 1), cellOf(r - 1, c - 1)];
+}
+const QN = ["tr", "br", "bl", "tl"];
+
+type Chunk = { text: string; cls?: string; i?: number; whole: boolean };
+const out: Chunk[][] = [];
+for (let r = 0; r < R; r++) {
+  const line: Chunk[] = [{ text: r === gin ? "→" : " ", cls: r === gin ? "gate" : undefined, whole: true }];
+  for (let c = 0; c < C; c++) {
+    const wide = c % 2 === 1;
+    const i = order.get(key(r, c));
+    let text: string, cls: string | undefined;
+    if (i !== undefined) { text = wide ? " • " : "•"; cls = "p"; }
+    else if (open[r][c]) { text = wide ? "   " : " "; }
+    else if (r % 2 === 0 && c % 2 === 0) {
+      const arms = [[r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]];
+      text = GLYPH[arms.map(([ar, ac]) => (wall(ar, ac) ? "1" : "0")).join("")];
+      if (arms.some(([ar, ac]) => wall(ar, ac) && outline(ar, ac))) cls = "l";
+    } else {
+      text = wide ? "───" : "│";
+      if (outline(r, c)) cls = "l";
+    }
+    const q = quarters(r, c);
+    const filled = QN.filter((_, k) => q[k]);
+    if (filled.length) cls = [cls, "f", ...filled].filter(Boolean).join(" ");
+    // Only uniform chunks (no fill, or a full or half fill) may merge with a neighbour.
+    const whole = filled.length === 0 || filled.length === 4 || (q[0] === q[3] && q[1] === q[2]);
+    line.push({ text, cls, i, whole });
+  }
+  // The exit gate is drawn by the button below, not by the art.
+  line.push({ text: " ", whole: true });
+  const merged: Chunk[] = [];
+  for (const ch of line) {
+    const last = merged[merged.length - 1];
+    if (last && ch.i === undefined && last.i === undefined && last.cls === ch.cls && last.whole && ch.whole) last.text += ch.text;
+    else merged.push({ ...ch });
+  }
+  out.push(merged);
+}
+const chars = 4 * cols + 1 + 2;
+---
+
+<div class={`maze ${extra}`} style={`--chars:${chars}`}>
+  <div class="maze-art">
+    <div class="maze-lines" aria-hidden="true">{out.map((line) => (
+      <div>{line.map((ch) => ch.cls
+        ? <span class={ch.cls} style={ch.i !== undefined ? `--i:${ch.i}` : undefined}>{ch.text}</span>
+        : ch.text)}</div>
+    ))}</div>
+    <button type="button" class="maze-exit" data-myth aria-haspopup="dialog" aria-label="Why DAEDALUS? The myth behind the name"
+      style={`--row:${gout}`}><span class="maze-arrow">→</span><span class="maze-hint" aria-hidden="true">why this name?</span></button>
+  </div>
+</div>
+
+<script>
+  // Loop the route: drawn (CSS `trace`, one character every 14 ms after 500 ms), held, faded
+  // out (`.fading`), then redrawn by switching to an identical animation (`.alt`).
+  const STEP_MS = 14, START_MS = 500, CHAR_MS = 300, HOLD_MS = 2500, FADE_MS = 900;
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    for (const maze of document.querySelectorAll<HTMLElement>(".maze")) {
+      const last = Math.max(0, ...[...maze.querySelectorAll<HTMLElement>(".p")].map((p) => Number(p.style.getPropertyValue("--i")) || 0));
+      const drawn = START_MS + last * STEP_MS + CHAR_MS;
+      const cycle = () => {
+        window.setTimeout(() => {
+          maze.classList.add("fading");
+          window.setTimeout(() => {
+            maze.classList.remove("fading");
+            maze.classList.toggle("alt");
+            cycle();
+          }, FADE_MS);
+        }, drawn + HOLD_MS);
+      };
+      cycle();
+    }
+  }
+</script>

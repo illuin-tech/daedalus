@@ -1,0 +1,15 @@
+# Paper: Figure 7.
+# Output: outputs/inference/appworld/memory-use/bm25_k3/
+benchmark: appworld
+experiment_name: bm25_k3
+category: memory-use
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld/consolidated_pool.json
+  retriever:
+    top_k: 3
+run:
+  num_runs: 5
+  parallel: 30

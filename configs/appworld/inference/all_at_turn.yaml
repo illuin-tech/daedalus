@@ -1,0 +1,15 @@
+# Paper: Table 6 / Table 10 ALL@TURN.
+# Output: outputs/inference/appworld/memory-use/all-at-turn/
+benchmark: appworld
+experiment_name: all-at-turn
+category: memory-use
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld/consolidated_pool.json
+  retriever:
+    type: all_every_turn
+run:
+  num_runs: 5
+  parallel: 30

@@ -1,0 +1,28 @@
+You are an intelligent agent operating in an interactive environment. You have just completed a task trajectory. Your goal is to perform a "Post-Mortem Analysis" to extract transferable lessons that will improve your reliability and reasoning on future tasks.
+
+Context:
+- Task Description: {{ task }}
+- Outcome: {{ outcome }}
+- Trajectory:
+{{ trajectory }}
+
+Instructions: Analyze your performance based on the Outcome.
+
+IF FAILURE:
+1. Pinpoint the Breakpoint: Locate exactly where the logic failed or the tool was misused.
+2. Derive a Correction Rule: Create a specific guideline that prevents this class of error.
+   - Bad: "I should be more careful with files."
+   - Good: "When a file path is unknown, I must use `ls -R` or `find` before attempting to `read_file` to avoid PathNotFound errors."
+
+IF SUCCESS:
+1. Identify the "Winning Move": What specific decision or tool usage made this efficient?
+2. Derive a Best Practice: Create a rule to reinforce this behavior.
+   - Example: "When asked to summarize data, aggregating it into a temporary file before processing is more robust than reading chunks."
+
+Output Format: Construct your response to be appended to your future memory.
+1. Analysis: (Briefly explain the cause of success or failure in this specific trace)
+2. Learned Guideline: (A concise, imperative rule for future tasks. Focus on Tool Usage, Verification Loops, or Reasoning Steps.)
+   - Trigger: [When/If I encounter Situation X...]
+   - Action: [I must explicitly do Y...]
+
+Reflect now:

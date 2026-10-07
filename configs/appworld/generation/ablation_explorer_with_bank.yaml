@@ -1,0 +1,16 @@
+# Paper: Table 3 (B).
+# Output: outputs/daedalus/appworld_ablation-B/
+benchmark: appworld
+experiment_name: appworld_ablation-B
+appworld:
+  dataset: train
+accumulation:
+  extraction_reasoning_effort: high
+generation:
+  stage: direct_exploration_with_bank
+  num_explorers: 1
+  coverage_tags_path: outputs/environment-survey/appworld/coverage_goal_train_2026-08-17_170214.txt
+  min_novelty: 0.05
+  excluded_apps:
+  - gmail
+  - amazon

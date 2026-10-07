@@ -1,0 +1,12 @@
+# Paper: Figure 8 (GPT-5.6 Luna, no memory).
+# Output: outputs/inference/appworld/evaluation-proxy/no-memory_gpt-5.6-luna/
+benchmark: appworld
+experiment_name: no-memory_gpt-5.6-luna
+category: evaluation-proxy
+agent:
+  model: gpt-5.6-luna
+appworld:
+  dataset: test_normal
+run:
+  num_runs: 5
+  parallel: 20

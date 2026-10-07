@@ -1,0 +1,14 @@
+# Paper: Table 1 no-memory baseline (AutomationBench).
+# Output: outputs/inference/automationbench/main-results/no-memory/
+benchmark: automationbench
+experiment_name: no-memory
+category: main-results
+agent:
+  model: gpt-5.6-luna
+  reasoning_effort: medium
+automationbench:
+  split_file: daedalus/benchmarks/automationbench/splits/operations_30_70.json
+  split: test
+run:
+  num_runs: 5
+  parallel: 8

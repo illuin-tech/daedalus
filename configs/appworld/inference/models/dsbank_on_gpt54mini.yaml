@@ -1,0 +1,14 @@
+# Paper: Table 2 (DeepSeek bank on GPT-5.4-mini).
+# Output: outputs/inference/appworld/cross-family/deepseek-bank_on_gpt-5.4-mini/
+benchmark: appworld
+experiment_name: deepseek-bank_on_gpt-5.4-mini
+category: cross-family
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld_deepseek/consolidated_pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 40

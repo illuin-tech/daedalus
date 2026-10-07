@@ -1,0 +1,18 @@
+# Paper: Table 1 PREPING (AutomationBench).
+# Output: outputs/inference/automationbench/main-results/preping/
+benchmark: automationbench
+experiment_name: preping
+category: main-results
+agent:
+  model: gpt-5.6-luna
+  reasoning_effort: medium
+automationbench:
+  split_file: daedalus/benchmarks/automationbench/splits/operations_30_70.json
+  split: test
+memory:
+  enabled: true
+  pool_path: outputs/baselines/preping/memory/automationbench/pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 6

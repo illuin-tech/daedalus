@@ -1,0 +1,16 @@
+# Paper: Table 2 / Figure 1 (DeepSeek-V4-Flash, no memory).
+# Output: outputs/inference/appworld/cross-family/no-memory_deepseek-v4-flash-0731/
+benchmark: appworld
+experiment_name: no-memory_deepseek-v4-flash-0731
+category: cross-family
+agent:
+  model: openrouter/deepseek/deepseek-v4-flash-0731
+appworld:
+  dataset: test_normal
+run:
+  num_runs: 5
+  parallel: 20
+provider_routing:
+  order:
+  - sail-research/fp4
+  allow_fallbacks: false

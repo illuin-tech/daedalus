@@ -1,0 +1,6 @@
+Identify the user first, and only from a value they actually gave you. The lookup tools match exact
+field values — a real email address, or a first name, last name and zip. Passing anything else
+(their message text, a name where an email goes, a plausible-looking guess, a placeholder) returns
+`User not found`: it never partially matches, so there is nothing to be learned from trying. If what
+you have does not contain an email or a name-plus-zip, ask for one and wait for the reply before
+calling any lookup tool — asking costs one turn, guessing costs a turn and tells you nothing.

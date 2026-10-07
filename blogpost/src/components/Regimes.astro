@@ -1,0 +1,81 @@
+---
+/**
+ * Fig. 2: three ways to meet a new environment, one row each, revealed as the page scrolls, in
+ * the tinted-cell look of fig. 4. Without memory, the agent makes the same error on every test
+ * task. Memory methods learn it away, but from curated training tasks and a verifier. DAEDALUS
+ * learns it away too, with no training tasks and no human priors. Each row flips down into place
+ * as the page scrolls, and back up when scrolling up (scripts/stepper.ts, `data-scrub`); the
+ * figure has no controls.
+ */
+type Test = { error: string; ok: boolean; note?: string };
+type Row = {
+  key: "base" | "cur" | "gen";
+  name: string;
+  sub: string;
+  /** Before deployment: labelled lines (`who`), or one plain statement. */
+  prep: { who?: string; text: string }[];
+  tag?: string;
+  tests: [Test, Test];
+};
+const ROWS: Row[] = [
+  {
+    key: "base", name: "no memory", sub: "every task starts from zero",
+    prep: [{ text: "nothing: the agent meets its environment on the first test task" }],
+    tests: [{ error: "error A", ok: false }, { error: "error A", ok: false, note: "the same mistake, again" }],
+  },
+  {
+    key: "cur", name: "memory methods", sub: "learn from curated training tasks",
+    prep: [
+      { who: "train 1", text: "✗ error A → lesson A" },
+      { who: "train 2", text: "✗ error B → lesson B" },
+    ],
+    tag: "needs training tasks + a verifier",
+    tests: [{ error: "error A", ok: true }, { error: "error B", ok: true }],
+  },
+  {
+    key: "gen", name: "DAEDALUS", sub: "learns from tasks it writes itself",
+    prep: [{ text: "no training tasks, no human priors" }],
+    tests: [{ error: "error A", ok: true }, { error: "error B", ok: true }],
+  },
+];
+const steps = ROWS.map(() => ({ lit: [], flow: [] }));
+---
+
+<figure class="box rg" data-stepper data-scrub data-steps={JSON.stringify(steps)}
+  aria-label="Three ways to meet a new environment: no memory, memory methods trained on curated tasks, and DAEDALUS.">
+  <span class="label"><b>fig. 2</b><span class="long"> three ways to meet a new environment</span></span>
+
+  <div class="rg-grid" aria-live="polite">
+    <div class="rg-head">
+      <span>before deployment</span>
+      <span>test task 1</span>
+      <span>test task 2</span>
+    </div>
+    {ROWS.map((r, i) => (
+      <div class={`rg-row rg-${r.key}`} data-row={i}>
+        <div class="rg-name"><i aria-hidden="true">■</i><b>{r.name}</b> <span class="muted">· {r.sub}</span></div>
+        <div class="rg-cell rg-prep">
+          {r.prep.map((l) => (
+            <span class={`rg-line${l.who ? "" : " rg-plain"}`}>
+              {l.who && <span class="rg-who">{l.who} ›</span>}
+              <span>{l.text}</span>
+            </span>
+          ))}
+          {r.tag && <span class="rg-tag">{r.tag}</span>}
+        </div>
+        {r.tests.map((t) => (
+          <div class={`rg-cell rg-test ${t.ok ? "is-ok" : "is-no"}`}>
+            <span class="rg-run">agent ──▶ <span class={t.ok ? "rg-avoided" : "rg-err"}>{t.error}</span></span>
+            <span class={`rg-flag ${t.ok ? "ok" : "no"}`}>{t.ok ? "✓ solved" : "✗ failed"}</span>
+            {t.note && <span class="rg-note muted">{t.note}</span>}
+          </div>
+        ))}
+      </div>
+    ))}
+  </div>
+
+  <p class="rg-why">
+    Memory helps, but existing methods need training tasks, and a verifier to grade them, written
+    by people who know the environment. DAEDALUS needs neither.
+  </p>
+</figure>

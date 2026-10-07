@@ -1,0 +1,14 @@
+# Paper: Table 3 (B).
+# Output: outputs/inference/appworld/pipeline-ablation/B_multi-session-explorer/
+benchmark: appworld
+experiment_name: B_multi-session-explorer
+category: pipeline-ablation
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld_ablation-B/consolidated_pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 30

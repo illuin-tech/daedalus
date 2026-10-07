@@ -1,0 +1,12 @@
+# Paper: Table 1, autoguide (appworld).
+# Output: outputs/baselines/autoguide/inference/appworld/
+benchmark: appworld
+experiment_name: appworld
+appworld:
+  dataset: test_normal
+run:
+  num_runs: 5
+  parallel: 20
+kind: inference
+autoguide:
+  bank_path: outputs/baselines/autoguide/memory/appworld/pool.json

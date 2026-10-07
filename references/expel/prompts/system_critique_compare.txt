@@ -1,0 +1,1 @@
+You will be given two previous task trials in which you {{ environment }}: one successful and one unsuccessful trial. You failed the trial {{ failure_reason }}.

@@ -1,0 +1,16 @@
+# Paper: Figure 1.
+# Output: outputs/inference/appworld/cross-family/gpt-bank_on_glm-5.3-flash/
+benchmark: appworld
+experiment_name: gpt-bank_on_glm-5.3-flash
+category: cross-family
+agent:
+  model: openrouter/z-ai/glm-5.3-flash
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld/consolidated_pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 30

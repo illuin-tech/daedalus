@@ -1,0 +1,44 @@
+You maintain a running memory for a specific business-operations task the agent is retrying. The task runs against simulated SaaS applications (mail, chat, spreadsheets, calendars, trackers, knowledge bases, CRM, e-signature) reached through a single HTTP tool. The memory is a bullet list of discrete, actionable lessons that is injected into the agent's prompt on its next attempt. The agent has just made an attempt; produce the updated list.
+
+Task: {{ instruction }}
+Attempt: #{{ attempt_index }} (failure budget: {{ max_failures }})
+Outcome: {{ outcome }}
+
+{% if current_memory %}Current memory (from previous attempts):
+{{ current_memory }}
+{% else %}Current memory: none yet — this is the first attempt.
+{% endif %}
+Agent trajectory:
+{{ trajectory_text }}
+
+## How to update the list
+If a memory already exists, rewrite it rather than appending: copy correct bullets unchanged, edit ones that need refining, drop ones this attempt proved wrong, and add bullets for what was just learned. Prefer a few sharp bullets over many vague ones.
+
+## What makes a bullet worth writing
+The agent will next meet a DIFFERENT task, in a DIFFERENT world, wired to a DIFFERENT set of applications. A bullet earns its place only if it would still change what the agent does there.
+
+Write decision rules over the task's own data — which records to read before acting, which ones qualify, which source wins when two disagree, what must be true before a write, what to check after one. These recur across tasks because the reasoning recurs.
+
+Do not write a recipe for one endpoint. A bullet whose situation clause is "to create a ticket in system X" or "to lock a page in system Y" fires only when the next task happens to use that call, and the agent can already discover the call itself. The exception is a mechanical trap that bites across services — argument encoding, placeholder substitution in a discovered URL, what a response does and does not prove — which is worth one bullet stated once, in general terms.
+
+Look across all the failure dimensions, not only the calls that returned an error:
+- Evidence gathering: if the agent selected, ranked or excluded records before reading every source that governs the choice (all tabs of a worksheet, the full thread rather than its first message, the channel history rather than the newest post), add a bullet on what to read first and why.
+- Qualification: if the agent applied the task's filters, exclusions, holds or date scopes loosely, or applied a requirement to records that never declared it, add a bullet stating how to decide membership.
+- Authority: if the agent treated the wrong source as decisive — an older notice over a newer one, an unofficial mention over the authorized sender, a request field over the registered record — add a bullet naming which source governs.
+- Identity: if the agent guessed an entity, recipient or account from initials, a shared surname or a similar name instead of resolving it against a directory or a prior record, add a bullet on resolving identity before acting.
+- Write verification: if the agent reported completion on the strength of a call that returned without error, add a bullet on what to re-read to prove the effect landed.
+- Scope: if the agent wrote something the task did not ask for, or stopped before a required effect, add a bullet on where the task's boundary is.
+
+{% if known %}
+## What the agent is ALREADY told, before every task
+Do not spend a bullet restating any of this — it is in the agent's prompt whether you write it
+or not, and a bullet that repeats it crowds out the lesson this attempt actually taught. Write
+about it only to record something it does NOT say (an exception, an exact name it omits, an order
+it leaves implicit).
+
+{{ known }}
+{% endif %}
+## Output
+Write each bullet as a single line beginning with `- `:
+- When <situation>, <do this>[, because <the reason>].
+State the situation by the shape of the task, not by the application it happened to use. Keep every bullet self-contained and generalizable — no task-specific identifiers (record ids, addresses, spreadsheet or channel names, values) and nothing that must be derived while solving (e.g. "the count is X"). Output only the bullet list, starting directly with `- `. No headers, JSON, fences, or commentary.

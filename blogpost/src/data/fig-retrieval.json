@@ -1,0 +1,129 @@
+{
+ "source": {
+  "script": "plots/scripts/retriever_top_k_analysis.py --benchmark appworld --split test_normal --model gpt-5.4-mini --retriever bm25 --pool outputs/generation/appworld_90sessions/consolidated_pool.json --runs 5",
+  "outputs": [
+   "appworld_baseline",
+   "appworld_generation_90_taskrealism_bm25_k1",
+   "appworld_generation_90_taskrealism_bm25_k2",
+   "appworld_generation_90_taskrealism_bm25_k3",
+   "appworld_generation_90_taskrealism_bm25_k5",
+   "appworld_generation_90_taskrealism_bm25_k10_rerun",
+   "appworld_generation_90_taskrealism_bm25_k20",
+   "appworld_generation_90_taskrealism_bm25_k30",
+   "appworld_generation_90_taskrealism_atstart"
+  ]
+ },
+ "x": {
+  "label": "retrieved per turn \u2014 bm25 top-k of 66",
+  "scale": "symlog (linthresh 1)"
+ },
+ "y": {
+  "unit": "%"
+ },
+ "series": {
+  "msr": "mean success rate",
+  "pass_k": "pass^5"
+ },
+ "k_pass": 5,
+ "bank_size": 65,
+ "skipped_short_runs": [
+  [
+   "appworld_generation_90_taskrealism_bm25_k10",
+   3
+  ]
+ ],
+ "points": [
+  {
+   "k": 0,
+   "msr": 44.286,
+   "pass_k": 14.881,
+   "pass_k_se": 2.754,
+   "label": "no memory",
+   "run": "appworld_baseline",
+   "n_tasks": 168,
+   "msr_sd": 2.403
+  },
+  {
+   "k": 1,
+   "msr": 46.786,
+   "pass_k": 18.452,
+   "pass_k_se": 3.002,
+   "label": "bm25 top-1",
+   "run": "appworld_generation_90_taskrealism_bm25_k1",
+   "n_tasks": 168,
+   "msr_sd": 4.792
+  },
+  {
+   "k": 2,
+   "msr": 48.69,
+   "pass_k": 19.643,
+   "pass_k_se": 3.074,
+   "label": "bm25 top-2",
+   "run": "appworld_generation_90_taskrealism_bm25_k2",
+   "n_tasks": 168,
+   "msr_sd": 2.805
+  },
+  {
+   "k": 3,
+   "msr": 50.357,
+   "pass_k": 21.429,
+   "pass_k_se": 3.175,
+   "label": "bm25 top-3",
+   "run": "appworld_generation_90_taskrealism_bm25_k3",
+   "n_tasks": 168,
+   "msr_sd": 1.662
+  },
+  {
+   "k": 5,
+   "msr": 52.024,
+   "pass_k": 22.024,
+   "pass_k_se": 3.207,
+   "label": "bm25 top-5",
+   "run": "appworld_generation_90_taskrealism_bm25_k5",
+   "n_tasks": 168,
+   "msr_sd": 2.934
+  },
+  {
+   "k": 10,
+   "msr": 53.095,
+   "pass_k": 19.643,
+   "pass_k_se": 3.074,
+   "label": "bm25 top-10",
+   "run": "appworld_generation_90_taskrealism_bm25_k10_rerun",
+   "n_tasks": 168,
+   "msr_sd": 3.89
+  },
+  {
+   "k": 20,
+   "msr": 52.976,
+   "pass_k": 22.619,
+   "pass_k_se": 3.237,
+   "label": "bm25 top-20",
+   "run": "appworld_generation_90_taskrealism_bm25_k20",
+   "n_tasks": 168,
+   "msr_sd": 5.103
+  },
+  {
+   "k": 30,
+   "msr": 58.214,
+   "pass_k": 29.167,
+   "pass_k_se": 3.517,
+   "label": "bm25 top-30",
+   "run": "appworld_generation_90_taskrealism_bm25_k30",
+   "n_tasks": 168,
+   "msr_sd": 5.478
+  }
+ ],
+ "reference": {
+  "label": "all @ start",
+  "msr": 60.238,
+  "pass_k": 32.143,
+  "pass_k_se": 3.614,
+  "run": "appworld_generation_90_taskrealism_atstart",
+  "msr_sd": 1.992
+ },
+ "errors": {
+  "msr_sd": "sample stdev of the per-repeat success rates (as the script plots)",
+  "pass_k_se": "task-sampling standard error of pass^5"
+ }
+}

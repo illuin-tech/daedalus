@@ -1,0 +1,12 @@
+# Smoke test: one AutomationBench `simple` task, no memory (tests/smoke_automationbench.py).
+benchmark: automationbench
+experiment_name: automationbench_smoke_inference
+category: smoke
+agent:
+  model: gpt-5.6-luna
+  reasoning_effort: medium
+automationbench:
+  domains: [simple]
+  max_steps: 15
+run:
+  max_tasks: 1

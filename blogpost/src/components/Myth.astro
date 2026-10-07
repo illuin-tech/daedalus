@@ -1,0 +1,88 @@
+---
+/**
+ * The note behind the name: who in the myth of Daedalus plays which part of the pipeline.
+ * A modal <dialog>, opened by any `[data-myth]` button (the exit arrow of the header maze).
+ * Closes with Esc, the [close] button, or a click on the backdrop; the page does not scroll
+ * behind it (global.css).
+ *
+ * Each character has a small square picture: drop `public/myth/<slug>.png` (square, any size;
+ * shown at 64 px) and the next build shows it. Until then, a placeholder square holds its place.
+ * `credit` is the picture's source, linked very discreetly under it.
+ */
+import fs from "node:fs";
+const CAST: { slug: string; myth: string; role: string; text: string; credit?: string }[] = [
+  { slug: "daedalus", myth: "Daedalus", role: "Explorer",
+    credit: "https://fr.wikipedia.org/wiki/D%C3%A9dale#/media/Fichier:Pieter_Thijs_-_Daedalus_fixing_wings_onto_the_shoulders_of_Icarus.jpg",
+    text: "The architect of the Labyrinth. He built it so intricate that, Ovid says, he could barely find his own way back out; but he could. The Explorer builds each task hard, and solves it first to prove there is a way out." },
+  { slug: "theseus", myth: "Theseus", role: "Solver",
+    credit: "https://www.radiofrance.fr/franceinter/podcasts/quand-les-dieux-rodaient-sur-la-terre/quand-les-dieux-rodaient-sur-la-terre-du-samedi-15-avril-2023-7477480",
+    text: "Walks into the Labyrinth through its entrance, with no map. The Solver attempts the task from a fresh start, knowing only what the memory tells it." },
+  { slug: "minotaur", myth: "the Minotaur", role: "the error",
+    credit: "https://www.saatchiart.com/en-hk/print/Painting-Minotaur/1385537/6875139/view",
+    text: "What waits inside and ends the attempt. Every lesson in the memory starts from one of these failures." },
+  { slug: "minos", myth: "Minos", role: "Judge",
+    credit: "https://www.arthistoryproject.com/artists/william-blake/minos/",
+    text: "The king of Crete, and after his death a judge of the dead. The Judge decides whether an attempt met the task's conditions." },
+  { slug: "ariadne", myth: "Ariadne", role: "Extractor",
+    credit: "https://fr.wikipedia.org/wiki/Fichier:Angelica_Kauffmann,_Ariadne_Abandoned_by_Theseus,_1774.jpg",
+    text: "On Daedalus's advice, she hands Theseus a thread to find his way back. After each failure, the Extractor writes the heuristic the Solver takes into its next attempt." },
+  { slug: "thread", myth: "the thread", role: "a heuristic",
+    credit: "https://www.saatchiart.com/en-hk/print/Painting-Ariadne-s-thread/2188717/10337129/view",
+    text: "“Clue” comes from “clew”, a ball of thread, after this story. A heuristic is kept only once it has led the Solver out three times in a row." },
+  { slug: "icarus", myth: "Icarus", role: "refinement",
+    credit: "https://eclecticlight.co/2016/04/13/the-story-in-paintings-icarus-and-his-downfall/",
+    text: "Daedalus told his son to fly neither too low, where the sea soaks the wings, nor too high, where the sun melts the wax. A task the Solver never fails flies too low, one it always fails too high: the Explorer refines it back to the middle." },
+  { slug: "talos", myth: "Talos", role: "Surveyor",
+    credit: "https://fr.wikipedia.org/wiki/Fichier:Talos_Painter_-_ARV_1338_1_-_Dionysos_with_satyrs_and_maenads_-_death_of_Talos_-_Argonauts_and_gods_-_Ruvo_MANJ_36933_-_06.jpg",
+    text: "The bronze guardian who went round Crete three times a day. The Surveyor goes round the whole environment first, so that the tasks cover all of it." },
+  { slug: "clew", myth: "the clew", role: "Consolidator",
+    text: "The Consolidator winds the kept threads into one ball: the memory the agent carries into every test task." },
+];
+// A picture is used once its file exists under public/myth/. Looked up from the project root
+// (where astro runs): once bundled, import.meta.url no longer points into src/.
+const picture = (slug: string) =>
+  fs.existsSync(`${process.cwd()}/public/myth/${slug}.png`) ? `${import.meta.env.BASE_URL.replace(/\/$/, "")}/myth/${slug}.png` : null;
+---
+
+<dialog id="myth" class="myth" aria-labelledby="myth-title">
+  <span class="label"><b>myth</b> the names behind DAEDALUS</span>
+  <button type="button" class="myth-close" data-close aria-label="Close">[× close]</button>
+  <div class="myth-in" tabindex="-1" autofocus>
+    <h3 id="myth-title">Why DAEDALUS?</h3>
+    <p>
+      In the myth, Daedalus builds the Labyrinth of Crete for King Minos, and he alone knows
+      that it has a way out. DAEDALUS casts the same characters.
+    </p>
+    <ul class="myth-cast">
+      {CAST.map((c) => (
+        <li>
+          <span class="myth-fig">
+            {picture(c.slug)
+              ? <img class="myth-pic" src={picture(c.slug)} alt="" width="64" height="64" loading="lazy" />
+              : <span class="myth-pic is-empty" aria-hidden="true" title={`public/myth/${c.slug}.png`}>{c.myth.replace(/^the /, "")[0].toUpperCase()}</span>}
+            {c.credit && <a class="myth-credit" href={c.credit} target="_blank" rel="noopener" aria-label={`Source of the picture of ${c.myth}`}>source</a>}
+          </span>
+          <span class="myth-who"><b>{c.myth}</b><span class="myth-role">──▶ {c.role}</span></span>
+          <span class="myth-text">{c.text}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="myth-logo">
+      In the maze of the header, the orange route is the thread, and the arrow you just clicked is
+      the way out.
+    </p>
+    <p class="myth-foot">Didn't get it? Read the blog post first, then come back!</p>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.getElementById("myth") as HTMLDialogElement | null;
+  if (dialog) {
+    for (const b of document.querySelectorAll<HTMLElement>("[data-myth]")) {
+      b.addEventListener("click", () => dialog.showModal());
+    }
+    dialog.querySelector("[data-close]")?.addEventListener("click", () => dialog.close());
+    // A click on the backdrop lands on the dialog itself; its content sits in .myth-in.
+    dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.close(); });
+  }
+</script>

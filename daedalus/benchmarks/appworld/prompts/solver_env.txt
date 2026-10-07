@@ -1,0 +1,5 @@
+## What you already know about this environment
+- Most app APIs are protected. Get credentials with `apis.supervisor.show_account_passwords()` (a list of `{account_name, password}`) and pick the entry matching the app you need.
+- Log in through the app's own login method (e.g. `apis.<app>.login(username=..., password=...)`). The username is usually the main user's profile email, not their display name.
+- Do not assume a login session persists: capture the returned `access_token` and pass it explicitly (`access_token=...`) to every later protected call for that app.
+- Before filtering or aggregating records, inspect one returned item's fields so you filter on the real field name rather than guessing.

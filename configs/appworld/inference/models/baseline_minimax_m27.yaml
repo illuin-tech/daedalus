@@ -1,0 +1,12 @@
+# Paper: Figures 1, 8 (MiniMax-M2.7, no memory).
+# Output: outputs/inference/appworld/cross-family/no-memory_minimax-m2.7/
+benchmark: appworld
+experiment_name: no-memory_minimax-m2.7
+category: cross-family
+agent:
+  model: openrouter/minimax/minimax-m2.7
+appworld:
+  dataset: test_normal
+run:
+  num_runs: 5
+  parallel: 4

@@ -1,0 +1,70 @@
+---
+/**
+ * Table 1: every method, one benchmark at a time (tabs). Bold: best in the column; underlined:
+ * best among the methods without training tasks.
+ */
+import { BENCHES, PAPERS, TABLE1 } from "../data/tables";
+
+type Better = "max" | "min";
+const METRICS: { key: 0 | 1 | 2; label: string; arrow: string; better: Better }[] = [
+  { key: 0, label: "MSR", arrow: "↑", better: "max" },
+  { key: 1, label: "pass^5", arrow: "↑", better: "max" },
+  { key: 2, label: "$", arrow: "↓", better: "min" },
+];
+
+const best = (vals: number[], better: Better) => (better === "max" ? Math.max(...vals) : Math.min(...vals));
+const free = TABLE1.filter((r) => r.group === "none");
+const mark = (v: number, all: number[], freeVals: number[], better: Better, isFree: boolean) =>
+  [v === best(all, better) && "best", isFree && v === best(freeVals, better) && "best-free"].filter(Boolean).join(" ") || undefined;
+
+const groupLabel = { training: "using training tasks", none: "without training tasks" };
+const rows: ((typeof TABLE1)[number] | { header: string })[] = [];
+let last: string | undefined;
+for (const r of TABLE1) {
+  if (r.group && r.group !== last) rows.push({ header: groupLabel[r.group] });
+  last = r.group;
+  rows.push(r);
+}
+---
+
+<figure class="box tbl" data-bench-tabs>
+  <span class="label"><b>table 1</b><span class="long"> main results, five inference runs per method</span></span>
+  <div class="tabs" role="tablist" aria-label="Benchmark">
+    {BENCHES.map((b, i) => (
+      <button type="button" role="tab" data-tab={b.id} class={i === 0 ? "on" : undefined}>{b.name} <span class="muted">{b.split}</span></button>
+    ))}
+  </div>
+  <div class="t-wrap">
+    <table class="t t1" data-show="appworld">
+      <thead>
+        <tr>
+          <th class="c-name">method</th>
+          {BENCHES.map((b) => METRICS.map((m) => (
+            <th data-b={b.id} class={m.key === 0 ? "c-sep" : undefined}>{m.label}<span class="muted">{m.arrow}</span></th>
+          )))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => "header" in r
+          ? <tr class="grp"><td colspan="10">{r.header}</td></tr>
+          : (
+            <tr class={r.ours ? "ours" : undefined}>
+              <td class="c-name">{PAPERS[r.name] ? <a class="ref" href={PAPERS[r.name]} target="_blank" rel="noopener">{r.name}</a> : r.name}</td>
+              {BENCHES.map((b) => METRICS.map((m) => {
+                const c = r.cells[b.id][m.key];
+                const cls = [m.key === 0 && "c-sep",
+                  mark(c.v, TABLE1.map((x) => x.cells[b.id][m.key].v), free.map((x) => x.cells[b.id][m.key].v), m.better, r.group === "none")]
+                  .filter(Boolean).join(" ") || undefined;
+                return <td data-b={b.id} class={cls}><span class="val">{c.v.toFixed(1)}</span>{c.se !== undefined && <span class="pm">±{c.se.toFixed(1)}</span>}</td>;
+              }))}
+            </tr>
+          ))}
+      </tbody>
+    </table>
+  </div>
+  <figcaption>
+    MSR: mean success rate (%); pass^5: tasks solved in all five runs (%); $: inference cost per
+    run (USD), memory generation excluded. <b>Bold</b>: best
+    in the column; <span class="u">underlined</span>: best without training tasks.
+  </figcaption>
+</figure>

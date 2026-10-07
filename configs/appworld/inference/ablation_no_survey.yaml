@@ -1,0 +1,14 @@
+# Paper: Table 3 (E).
+# Output: outputs/inference/appworld/pipeline-ablation/E_guideline-bank/
+benchmark: appworld
+experiment_name: E_guideline-bank
+category: pipeline-ablation
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld_ablation-E/consolidated_pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 30

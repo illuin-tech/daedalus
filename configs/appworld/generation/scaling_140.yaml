@@ -1,0 +1,14 @@
+# Paper: Figure 6 / Table 7 (140 sessions).
+# Output: outputs/daedalus/appworld_140-sessions/
+benchmark: appworld
+experiment_name: appworld_140-sessions
+appworld:
+  dataset: train
+accumulation:
+  extraction_reasoning_effort: high
+generation:
+  num_sessions: 2
+  coverage_tags_path: outputs/environment-survey/appworld/coverage_goal_train_2026-08-17_170214.txt
+  excluded_apps:
+  - gmail
+  - amazon

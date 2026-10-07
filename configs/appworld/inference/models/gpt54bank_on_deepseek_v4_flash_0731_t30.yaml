@@ -1,0 +1,20 @@
+# Paper: Table 2 (GPT-5.4 bank on DeepSeek-V4-Flash); Figure 1.
+# Output: outputs/inference/appworld/cross-family/gpt-bank_on_deepseek-v4-flash-0731/
+benchmark: appworld
+experiment_name: gpt-bank_on_deepseek-v4-flash-0731
+category: cross-family
+agent:
+  model: openrouter/deepseek/deepseek-v4-flash-0731
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld/consolidated_pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 4
+provider_routing:
+  order:
+  - sail-research/fp4
+  allow_fallbacks: false

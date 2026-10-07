@@ -1,0 +1,19 @@
+# Paper: Table 5 (auxiliary agents on GPT-5.4-mini).
+# Output: outputs/daedalus/appworld_aux-gpt-5.4-mini/
+benchmark: appworld
+experiment_name: appworld_aux-gpt-5.4-mini
+appworld:
+  dataset: train
+accumulation:
+  extraction_model: gpt-5.4-mini
+  extraction_reasoning_effort: high
+generation:
+  explorer_model: gpt-5.4-mini
+  judge_model: gpt-5.4-mini
+  num_sessions: 25
+  num_explorers: 3
+  coverage_tags_path: outputs/environment-survey/appworld/coverage_goal_train_2026-08-17_170214.txt
+  min_novelty: 0.05
+  excluded_apps:
+  - gmail
+  - amazon

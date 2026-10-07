@@ -1,0 +1,95 @@
+---
+/**
+ * Fig. 4: one AppWorld test task, run without memory and with the DAEDALUS memory, turn by turn.
+ * Scrolling down reveals one more step of both runs at a time, scrolling up hides it again
+ * (`data-scrub`: the figure has no controls); the run without memory goes off
+ * track at step 2 and answers wrong, the run with memory follows two heuristics and answers
+ * right. Steps are driven by scripts/stepper.ts. Condensed from run 2 of each (the traces named
+ * in src/data/memory-example.json); the last row counts all five runs, and only then does the
+ * "why it works" note appear.
+ */
+import ex from "../data/memory-example.json";
+
+type Side = {
+  turn: string; what: string; code?: string; out?: string;
+  /** off: the run leaves the right path here; ok / no: the final answer. */
+  mark?: "off" | "ok" | "no";
+  /** A heuristic from the memory that this turn follows. */
+  memory?: string;
+};
+const STEPS: { base: Side; mem: Side }[] = [
+  {
+    base: { turn: "t1–2", what: "Lists the Spotify APIs and logs in.", code: "apis.spotify.login(username=…, password=…)" },
+    mem: { turn: "t1–2", what: "Lists the Spotify APIs and logs in.", code: "apis.spotify.login(username=…, password=…)" },
+  },
+  {
+    base: { turn: "t3", what: "Fetches the liked songs, without paging arguments.", code: "apis.spotify.show_liked_songs(access_token=…)",
+      out: "the first page only: 5 of the 25 liked songs, and no playlist in sight", mark: "off" },
+    mem: { turn: "t3", what: "Reads the docs of the two collections the heuristic names.", code: 'show_api_doc(app_name="spotify", api_name="show_playlist_library")',
+      memory: "Your playlists come from show_playlist_library, which lists their song_ids; liked songs carry a song_id. Compare by ID." },
+  },
+  {
+    base: { turn: "t4–5", what: "Looks for the genre field: one failed call, then finds it on each song.", code: 'apis.spotify.show_song(song_id=…)', out: '"genre": "classical"' },
+    mem: { turn: "t4", what: "Pages through the 8 playlists (57 song IDs) and all 25 liked songs, and keeps the liked songs that are in a playlist.",
+      code: 'liked_in_playlists = [s for s in liked_songs if s["song_id"] in playlist_song_ids]', out: "12 songs",
+      memory: "Fully paginate Spotify collections (page_limit ≤ 20) before comparing sets." },
+  },
+  {
+    base: { turn: "t6", what: "Counts genres over its 5 liked songs, never opening a playlist.", out: 'classical 2 · EDM 1 · rock 1 · jazz 1' },
+    mem: { turn: "t4", what: "Counts genres over exactly those 12 songs.", out: "reggae 4 · EDM 2 · classical 2 · rock 1 · pop 1 · …" },
+  },
+  {
+    base: { turn: "t7", what: "Answers from the wrong set of songs.", code: 'complete_task(answer="classical")', mark: "no" },
+    mem: { turn: "t5", what: "Answers, two turns earlier.", code: 'complete_task(answer="reggae")', mark: "ok" },
+  },
+];
+const steps = [...STEPS, null].map(() => ({ lit: [], flow: [] }));
+const last = STEPS.length;
+---
+
+<figure class="box mx" data-stepper data-scrub data-steps={JSON.stringify(steps)}
+  aria-label="One test task, turn by turn, without and with memory, revealed as the page scrolls.">
+  <span class="label"><b>fig. 4</b><span class="long"> one test task, turn by turn, without and with memory</span></span>
+
+  <span class="lbl">AppWorld test task</span>
+  <q class="mx-q">{ex.instruction}</q>
+
+  <div class="mx-race" aria-live="polite">
+    <div class="mx-head">
+      <span class="mx-who side-base">without memory</span>
+      <span class="mx-who side-mem">with memory</span>
+    </div>
+    {STEPS.map((s, i) => (
+      <div class="mx-step" data-row={i}>
+        {(["base", "mem"] as const).map((side) => {
+          const x = s[side];
+          return (
+            <div class={`mx-cell side-${side}${side === "base" && i > 0 ? " is-off" : ""}`}>
+              <span class="mx-t">{x.turn}</span>
+              <div class="mx-body">
+                {x.memory && <span class="mx-mem"><b>memory ›</b> {x.memory}</span>}
+                <span class="mx-what">{x.what}</span>
+                {x.code && <code class="mx-code">{x.code}</code>}
+                {x.out && <span class="mx-out">→ {x.out}</span>}
+                {x.mark === "off" && <span class="mx-flag no">✗ off track from here</span>}
+                {x.mark === "no" && <span class="mx-flag no">✗ wrong: the answer is {ex.answer}</span>}
+                {x.mark === "ok" && <span class="mx-flag ok">✓ right</span>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    ))}
+    <div class="mx-step mx-final" data-row={last}>
+      <div class="mx-cell side-base is-off"><span class="mx-t">×5</span><div class="mx-body"><span class="mx-n no">✗ {ex.runs.baseline_successes}/{ex.runs.out_of} runs</span><span class="mx-what muted">answers {[...new Set(ex.baseline_answers)].join(", ")}; median {ex.turns.baseline_median} turns</span></div></div>
+      <div class="mx-cell side-mem"><span class="mx-t">×5</span><div class="mx-body"><span class="mx-n ok">✓ {ex.runs.memory_successes}/{ex.runs.out_of} runs</span><span class="mx-what muted">reggae every time; median {ex.turns.memory_median} turns</span></div></div>
+    </div>
+  </div>
+
+  <p class="mx-why" aria-live="polite">
+    <b>Why it works.</b> The task asks for liked songs that are also in the user's playlists: two
+    collections to intersect, and nothing says where either one lives. Without memory, the agent
+    counts the first collection it finds. The memory, learned on generated Spotify tasks and never on
+    this one, says where both live, which field joins them, and to read every page.
+  </p>
+</figure>

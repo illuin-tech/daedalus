@@ -1,0 +1,21 @@
+You are reviewing a customer-service agent's attempt at a task to draw out lessons that will help on future, unrelated tasks. The agent converses with a user and acts on the domain through tool calls, under a policy it must follow.
+
+Task: {{ instruction }}
+Outcome: {{ outcome }}
+
+Agent trajectory (conversation + tool calls):
+{{ trajectory_text }}
+
+## What to look for
+Work out the root cause of this outcome — not a summary of what happened. Consider several dimensions:
+- Tool usage: a wrong tool or arguments, calls in the wrong order, or acting on the wrong record.
+- Policy compliance: a required check skipped, an action taken without the mandatory explicit confirmation, or something the policy forbids.
+- Information gathering: acting before authenticating the user or before fetching the records the action depends on.
+- Communication: computing or retrieving the right information but never stating it to the user.
+- Ending: stopping, transferring, or letting the conversation end before every part of the request was done.
+
+## What to produce
+1. Analysis: one to three sentences naming the root cause of the success or failure. Do not narrate the trajectory.
+2. Lessons: one to three durable lessons for future tasks. Write each as a single line beginning with `- `:
+   - When <situation the agent will meet again>, <do this>[, because <the reason>].
+   Keep every lesson generalizable — no ids, names, order numbers, or values from this task — and concrete enough to act on (not "be careful"). Each lesson should address a distinct failure mode or winning move, phrased in the situation wording that would actually appear next time.

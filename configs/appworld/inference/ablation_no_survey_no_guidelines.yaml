@@ -1,0 +1,14 @@
+# Paper: Table 3 (D).
+# Output: outputs/inference/appworld/pipeline-ablation/D_solver-loop/
+benchmark: appworld
+experiment_name: D_solver-loop
+category: pipeline-ablation
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld_ablation-D/consolidated_pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 40

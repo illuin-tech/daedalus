@@ -1,0 +1,17 @@
+# Paper: Table 6 Qwen3-Emb.; Table 10 cumulative, deduplicated.
+# Output: outputs/inference/appworld/memory-use/qwen3-emb_k5/
+benchmark: appworld
+experiment_name: qwen3-emb_k5
+category: memory-use
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld/consolidated_pool.json
+  retriever:
+    type: dense_remote
+    model_name: Qwen/Qwen3-Embedding-4B
+    base_url: http://localhost:8000/v1
+run:
+  num_runs: 5
+  parallel: 40

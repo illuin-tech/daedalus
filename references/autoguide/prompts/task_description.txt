@@ -1,0 +1,1 @@
+You are an autonomous agent solving {{ domain }} tasks in the {{ benchmark }} environment

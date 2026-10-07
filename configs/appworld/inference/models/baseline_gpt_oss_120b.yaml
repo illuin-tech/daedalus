@@ -1,0 +1,12 @@
+# Paper: Figure 8 (gpt-oss-120b, no memory).
+# Output: outputs/inference/appworld/evaluation-proxy/no-memory_gpt-oss-120b/
+benchmark: appworld
+experiment_name: no-memory_gpt-oss-120b
+category: evaluation-proxy
+agent:
+  model: openrouter/openai/gpt-oss-120b
+appworld:
+  dataset: test_normal
+run:
+  num_runs: 5
+  parallel: 40

@@ -1,0 +1,6 @@
+This is a new phase of the same exploration — reuse what you already learned about the data (above); you do not need to rediscover it. But you MUST carry out the adjusted task yourself in code in THIS session before emitting anything — your earlier run does not count, and a spec emitted without execution is rejected.
+
+Proceed, starting NOW:
+1. Decide the small adjustment.
+2. Your FIRST message must be a Thought + a ```python block that EXECUTES the full solution to the adjusted task, step by step, confirming each call works. Do not emit json yet.
+3. Only after you have actually run the solution and seen it succeed, emit the final ```json spec (the same shape as before: task, expected_path, success_conditions{% if coverage_tally %}, tags{% endif %}).

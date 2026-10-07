@@ -1,0 +1,13 @@
+# Paper: Table 1, autoguide (appworld).
+# Output: outputs/baselines/autoguide/memory/appworld/
+benchmark: appworld
+experiment_name: appworld
+appworld:
+  dataset: train
+accumulation:
+  max_failures: 4
+  num_success_to_continue: 1
+  extraction_model: gpt-5.4-mini
+run:
+  parallel: 20
+kind: accumulation

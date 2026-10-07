@@ -1,0 +1,14 @@
+# Paper: Table 8.
+# Output: outputs/inference/appworld/extractor-choice/extractor-gpt-5.4-mini/
+benchmark: appworld
+experiment_name: extractor-gpt-5.4-mini
+category: extractor-choice
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus-curated/appworld_extractor-gpt-5.4-mini/consolidated_pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 30

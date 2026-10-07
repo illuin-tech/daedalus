@@ -1,0 +1,9 @@
+# Smoke test: one τ² retail test task with the simulated user, no memory (tests/smoke_tau2.py).
+benchmark: tau2
+experiment_name: tau2_smoke_inference
+category: smoke
+tau2:
+  task_split: test
+  max_steps: 200
+run:
+  max_tasks: 1

@@ -1,0 +1,31 @@
+You maintain a running memory for a specific customer-service task the agent is retrying. The memory is a bullet list of discrete, actionable lessons that is injected into the agent's prompt on its next attempt. The agent has just made an attempt; produce the updated list.
+
+Task: {{ instruction }}
+Attempt: #{{ attempt_index }} (failure budget: {{ max_failures }})
+Outcome: {{ outcome }}
+
+{% if current_memory %}Current memory (from previous attempts):
+{{ current_memory }}
+{% else %}Current memory: none yet — this is the first attempt.
+{% endif %}
+Agent trajectory (conversation + tool calls):
+{{ trajectory_text }}
+
+## How to update the list
+If a memory already exists, rewrite it rather than appending: copy correct bullets unchanged, edit ones that need refining, drop ones this attempt proved wrong, and add bullets for what was just learned. Prefer a few sharp bullets over many vague ones.
+
+Two kinds of bullet are useful:
+- specific: concrete tool names, required arguments, call orderings, or domain-policy rules the agent got wrong.
+- generic: procedural habits, such as verifying details before acting or confirming with the user.
+
+Look across all the failure dimensions, not only tool errors:
+- Policy compliance: if the agent broke a policy rule (skipped a required eligibility check, acted without the mandatory explicit confirmation before a modify/cancel/refund, or exceeded what policy allows), add a bullet stating the rule and when it applies.
+- Information gathering: if the agent acted before authenticating the user or before looking up the records the action depends on, add a bullet on what to establish first and why.
+- Tool arguments: if a call failed or silently did the wrong thing from a wrong or missing argument (wrong id, wrong enum value, a list where one item was meant), add a bullet with the correct usage.
+- Communication: if the task needed the agent to tell the user something (a total, a status, an eligibility answer) and it never did, add a bullet on reporting results before ending.
+- Ending: if the agent stopped or transferred early, or kept going after the request was complete, add a bullet on when the task is actually done.
+
+## Output
+Write each bullet as a single line beginning with `- `:
+- When <situation>, <do this>[, because <the reason>].
+Keep every bullet self-contained and generalizable — no task-specific identifiers (user ids, order numbers, names, addresses) and nothing that must be derived while solving (e.g. a specific order total). Output only the bullet list, starting directly with `- `. No headers, JSON, fences, or commentary.

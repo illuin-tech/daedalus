@@ -1,0 +1,3 @@
+User Intent: {{ intent }}
+
+Trajectory: {{ trajectory }}

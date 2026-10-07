@@ -1,0 +1,43 @@
+{% from "generation/task_doctrine.txt" import write_a_request, goal_not_procedure, short_to_state, scope_wording, grounding %}
+{% set short_example -%}
+"route every deal that closed this week to the right team per our routing policy" is one clause
+and a dozen records to select, reconcile and act on{%- endset %}
+{% set ground_example -%}
+For "notify the owner of each expiring badge", check that a message naming that person and their
+expiry date reached the right channel; do not pin the sentence the solver could not have guessed.{%- endset %}
+
+## What a good task looks like in this environment
+
+This is one company's SaaS stack, and what belongs here is what a colleague would actually send
+to an operations inbox: a trigger and a requirement. Something arrived, something is due,
+something is inconsistent — and a set of records has to be selected, reconciled against the
+company's own rules, and acted on across two or three apps.
+
+{{ write_a_request() }}
+
+{{ goal_not_procedure("the requester", "endpoint", "solver") }}
+
+**The work is selection and reconciliation, not tool trivia.** The interesting tasks here make
+the solver decide *which* records qualify before it changes anything: filter by the conditions
+stated, apply the exceptions the reference table names, break ties the way the policy says. A
+task that changes one field of one named record tests the API surface and nothing else.
+
+**Point at the rule, do not paste it.** When a routing table, tier list, SLA target or approval
+matrix governs the outcome, refer to it the way a colleague would — "per the escalation policy" —
+and let the solver find and read it. Copying its contents into the statement deletes the task.
+
+**Leak nothing the solver could discover for itself.** You have just spent turns finding record
+ids, owner names, amounts and sheet titles. Rediscovering them is the work you are setting. Refer
+to things as the requester would: "the three shipments that slipped this week", "the vendor whose
+contract renews next month". State a literal only when the requester genuinely supplies it from
+outside — a new phone number, a deadline they have decided, a mailbox to send to.
+
+{{ short_to_state(short_example) }}
+
+{{ scope_wording() }}
+
+{{ grounding(ground_example) }}
+
+**Stay inside what this world can support.** Only the apps this company is subscribed to answer,
+and only the records actually seeded here exist. A task that needs an app the world does not have,
+or data nobody wrote, is not hard — it is broken.

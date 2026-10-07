@@ -1,0 +1,36 @@
+{
+  "task_id": "425a494_3",
+  "instruction": "Songs of which genre have I liked the most in my Spotify playlists?",
+  "answer": "reggae",
+  "runs": { "baseline_successes": 0, "memory_successes": 5, "out_of": 5 },
+  "turns": { "baseline_median": 9, "memory_median": 7 },
+  "baseline_answers": ["R&B", "EDM", "classical", "classical", "classical"],
+  "heuristic": {
+    "memory_id": "m_e3a7ed25",
+    "text": "Normalize Spotify IDs across endpoints and compare by ID, not name: `show_playlist_library(...)` exposes `song_ids`, `show_playlist(...)` returns `songs[*][\"id\"]`, library/liked/downloaded records use `song_id`, followed-artist records use `artist_id`, and song artist objects use `artists[*][\"id\"]`.",
+    "paraphrase": "Your own playlists come from show_playlist_library, which lists their song IDs; liked songs carry a song_id. Join the two by ID.",
+    "supporting": {
+      "memory_id": "m_c6f2a54b",
+      "text": "Fully paginate Spotify collection endpoints such as `show_playlist_library`, `show_song_library`, `show_liked_songs`, `show_downloaded_songs`, `show_following_artists`, and `search_playlists` with `page_index` and `page_limit <= 20` before comparing sets or ranking results."
+    }
+  },
+  "baseline": [
+    { "turn": 2, "what": "Fetches the liked songs, with no paging arguments: it gets the first page only, 5 of the 25.", "excerpt": "liked_songs = apis.spotify.show_liked_songs(access_token=spotify_token[\"access_token\"])" },
+    { "turn": 4, "what": "Finds where the genre lives: on each song record.", "excerpt": "print(apis.spotify.show_song(song_id=sample_song[\"song_id\"]))" },
+    { "turn": 5, "what": "Counts genres over those liked songs, never looking at the user's playlists.", "excerpt": "{\"classical\": 2, \"EDM\": 1, \"rock\": 1, \"jazz\": 1}" },
+    { "turn": 6, "what": "Answers from the wrong set of songs; the grader expected reggae.", "excerpt": "apis.supervisor.complete_task(answer=\"classical\")" }
+  ],
+  "memory": [
+    { "turn": 2, "what": "Goes straight to the two endpoints the heuristic names: the user's playlist library and the liked songs.", "excerpt": "print(apis.api_docs.show_api_doc(app_name=\"spotify\", api_name=\"show_playlist_library\"))" },
+    { "turn": 3, "what": "Pages through the playlist library and collects the song IDs of the user's 8 playlists.", "excerpt": "for sid in pl.get(\"song_ids\", []):" },
+    { "turn": 3, "what": "Pages through all 25 liked songs, then keeps the ones whose song_id is in a playlist: 12 songs.", "excerpt": "liked_in_playlists = [s for s in liked_songs if s[\"song_id\"] in playlist_song_ids]" },
+    { "turn": 3, "what": "Counts genres over exactly those songs.", "excerpt": "Counter({'reggae': 4, 'EDM': 2, 'classical': 2, 'rock': 1, 'pop': 1, 'indie': 1, 'R&B': 1})" },
+    { "turn": 4, "what": "Answers correctly, in 5 turns instead of 7.", "excerpt": "apis.supervisor.complete_task(answer=\"reggae\")" }
+  ],
+  "why": "\"Liked songs in my playlists\" is the intersection of two collections, and nothing in the task says where either lives. Without memory, the agent answers from whatever collection it finds first: liked playlists, or the first page of liked songs. The heuristic, learned on generated Spotify tasks, names the user's playlist library and the song-ID fields that link it to liked songs, so the memory agent builds the right set in all five runs.",
+  "sources": {
+    "baseline": "outputs/inference/appworld/baselines/appworld_baseline/run_2/425a494_3.json",
+    "memory": "outputs/inference/appworld/perf-using-daedalus/appworld_generation_90_taskrealism_atstart/run_2/425a494_3.json",
+    "bank": "outputs/generation/appworld_90sessions/consolidated_pool.json"
+  }
+}

@@ -1,0 +1,73 @@
+---
+/**
+ * Table 4 as a bar list: how the memory is consolidated and injected, one bar per policy on a
+ * shared 0–70% scale, with a toggle between MSR and pass^5. The dotted line is the no-memory
+ * baseline; the inference cost per run sits on the right. Data: INJECTION in src/data/tables.ts.
+ */
+import { INJECTION } from "../data/tables";
+
+const SCALE = 70;
+const TICKS = [0, 20, 40, 60];
+const base = INJECTION[0];
+
+// Rows named by what they do, instead of the paper's dedup. / consol. columns.
+const name = (r: (typeof INJECTION)[number]) => {
+  if (r.policy === "No memory") return "no memory";
+  if (r.group === "Top-5 per turn") return r.policy === "Qwen3-Emb." ? "Qwen3 embeddings" : r.policy;
+  if (r.group === "Whole memory per turn") return "consolidated memory";
+  if (r.consol === "✓") return "consolidated";
+  return r.dedup === "✓" ? "deduplicated heuristics" : "raw heuristics";
+};
+const GROUPS: Record<string, string> = {
+  "Top-5 per turn": "top-5 heuristics retrieved per turn, from the consolidated memory",
+  "Whole memory per turn": "whole memory, re-injected every turn",
+  "Whole memory at start": "whole memory, once at task start",
+};
+const bestCost = Math.min(...INJECTION.filter((r) => r.policy !== "No memory").map((r) => r.cost));
+let lastGroup = "";
+---
+
+<figure class="box inj" data-metric="msr" data-reveal
+  style={`--scale:${SCALE}; --ref-msr:${base.msr.v}; --ref-pass:${base.pass5.v}`}>
+  <span class="label"><b>table 4</b><span class="long"> consolidating and injecting the memory</span></span>
+  <div class="chart-bar">
+    <span class="seg" data-metric-toggle><button type="button" data-metric="msr" class="on">MSR</button><button type="button" data-metric="pass5">pass^5</button></span>
+  </div>
+
+  <div class="inj-head">
+    <span></span>
+    <span><span class="m-msr">mean success rate</span><span class="m-pass">pass^5</span> (%)</span>
+    <span class="inj-cost">$/run</span>
+  </div>
+  {INJECTION.map((r) => {
+    const head = r.group && r.group !== lastGroup ? GROUPS[r.group] : "";
+    lastGroup = r.group;
+    return (
+      <>
+        {head && <div class="inj-grp">{head}</div>}
+        <div class={["inj-row", r.ours && "ours", r.policy === "No memory" && "base"].filter(Boolean).join(" ")}
+          style={`--msr:${r.msr.v}; --pass:${r.pass5.v}`}>
+          <span class="inj-name">{name(r)}{r.ours && <span class="teal"> · DAEDALUS</span>}</span>
+          <span class="inj-track">
+            <span class="inj-bar"></span>
+            <span class="inj-val">
+              <span class="m-msr">{r.msr.v.toFixed(1)}<span class="pm">±{r.msr.se?.toFixed(1)}</span></span>
+              <span class="m-pass">{r.pass5.v.toFixed(1)}<span class="pm">±{r.pass5.se?.toFixed(1)}</span></span>
+            </span>
+          </span>
+          <span class={r.cost === bestCost ? "inj-cost best" : "inj-cost"}>{r.cost.toFixed(1)}</span>
+        </div>
+      </>
+    );
+  })}
+  <div class="inj-axis" aria-hidden="true">
+    <span></span>
+    <span class="inj-ticks">{TICKS.map((t) => <span style={`left:${(t / SCALE) * 100}%`}>{t}</span>)}</span>
+    <span></span>
+  </div>
+  <figcaption>
+    AppWorld, five runs each; the dotted line is the no-memory baseline. Consolidation merges the
+    accepted heuristics in one LLM call, removing redundant or overlapping advice; deduplication
+    only drops the heuristics that restate another. <b>Bold</b>: cheapest.
+  </figcaption>
+</figure>

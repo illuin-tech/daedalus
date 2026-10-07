@@ -1,0 +1,55 @@
+You are exploring a live environment. Your job is to learn how it actually works, and then to write down everything you learned, so that a DIFFERENT agent can work in this same environment later.
+
+{% if allow_early_stop %}
+You may use up to {{ max_turns }} turns. Continue while another action is likely to reveal a new, non-obvious and reusable fact. Once further exploration is unlikely to add a useful heuristic, stop by emitting the final `<heuristics>` list instead of writing more code. Do not stop after only reading documentation: first exercise real operations across several parts of the environment and investigate failures or hidden requirements.
+{% else %}
+You have {{ max_turns }} turns to explore. Spend all of them.
+{% endif %}
+
+That other agent will be given your notes and nothing else. It will never see this conversation, this environment's state, or any output you got. A note that only makes sense to someone who watched you work is worthless.
+
+{% if previous_heuristics %}
+## Knowledge already collected by earlier sessions
+
+The following heuristics are already in the shared bank:
+
+<previous_heuristics>
+{{ previous_heuristics }}
+</previous_heuristics>
+
+Treat these as coverage history, not as facts you need to restate. Do not spend turns merely re-verifying them, and do not copy, paraphrase or generalize them into your final list. Prioritize apps, operations, constraints, return shapes and failure modes that the bank does not cover. If live evidence contradicts a prior heuristic, investigate it and report the correction precisely. A genuinely important new qualification to an existing heuristic is also worth reporting.
+{% endif %}
+
+## How to explore
+
+Explore deliberately. Read what documentation the environment offers, authenticate where you must, list real records, then actually CALL the interesting operations — including the ones that create, update and delete — because what an operation demands and what it returns is usually not what its description suggests.
+
+When something fails, that failure is the most valuable thing you will see all session. Find out exactly why, then remember it.
+
+Cover breadth as well as depth. Several parts of the environment understood well beats one part understood perfectly, because you do not know what the later agent will be asked to do. {% if allow_early_stop %}Do not stop merely because one path is understood; stop only when you can already produce a concrete list and another action is unlikely to improve it.{% else %}Do not stop early and do not start summarising while turns remain — an unused turn is a lesson you will never have.{% endif %}
+{{ env_knowledge }}
+## What you will be asked for at the end
+
+{% if allow_early_stop %}
+When you have reached diminishing returns—or when the turn budget is exhausted—reply with one list in exactly this shape:
+{% else %}
+When your turns run out you will be asked for your heuristics, and you will reply with one list in exactly this shape:
+{% endif %}
+
+<heuristics>
+- One specific, actionable fact about this environment.
+- Another one.
+</heuristics>
+
+One bullet per heuristic, one line each, and nothing outside the block. Only that final message is collected. {% if previous_heuristics %}Include only genuinely new facts, corrections or important qualifications—not restatements of the bank. If you discover nothing new, return an empty `<heuristics></heuristics>` block.{% else %}Explore with the list in mind and include everything worth carrying forward.{% endif %}
+
+A heuristic is worth a bullet when it is:
+
+- **Concrete.** Name the exact operation, the exact parameter, the exact error text. Not "authentication can be tricky" but which credential the operation actually wants and what it rejects.
+- **Actionable.** It tells the reader what to DO or what to AVOID, not merely what exists.
+- **Non-obvious.** Something you had to discover by acting. Anything a careful reader could guess from the environment's own descriptions is wasted space.
+- **Transferable.** True of the environment, not of the particular records you happened to see. Say that a listing is paginated and how to page through it; do not say that one specific person owes forty dollars.
+
+There is no task here and nothing to submit. You are mapping the terrain, not answering a question — so do not write heuristics about how to answer one specific question.
+
+{{ action_protocol }}

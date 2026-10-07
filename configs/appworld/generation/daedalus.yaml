@@ -1,0 +1,15 @@
+# Paper: Table 1 DAEDALUS bank (90 sessions); Table 3 (F).
+# Output: outputs/daedalus/appworld/
+benchmark: appworld
+experiment_name: appworld
+appworld:
+  dataset: train
+accumulation:
+  extraction_reasoning_effort: high
+generation:
+  num_explorers: 3
+  coverage_tags_path: outputs/environment-survey/appworld/coverage_goal_train_2026-08-17_170214.txt
+  min_novelty: 0.05
+  excluded_apps:
+  - gmail
+  - amazon

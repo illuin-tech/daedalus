@@ -1,0 +1,22 @@
+{
+  "name": "daedalus-blogpost",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "astro": "^7.0.0",
+    "plotly.js-basic-dist-min": "^4.1.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

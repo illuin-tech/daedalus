@@ -1,0 +1,7 @@
+This world is one company's SaaS stack: {{ services }}. Each app answers as its real vendor's API does, and the company is subscribed to those apps and no others — a call to anything else fails with a credentials error.
+
+A few facts about the data:
+- Spreadsheets carry the company's reference tables: routing rules, tiers, SLA targets, approval matrices, scoring weights. They are authoritative, and a realistic task usually turns on one of them.
+- Transactional records — rows, tickets, messages, deals — include entries unrelated to any one job, so a task can require selecting the right subset by stated conditions.
+- People are named in records but addressed by id or email; identifiers have to be looked up.
+- The current time is fixed for this world and stored in its data, not supplied to the solver.

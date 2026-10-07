@@ -1,0 +1,38 @@
+You maintain a running memory for a specific task the agent is retrying. The memory is a bullet list of discrete, actionable lessons that is injected into the agent's prompt on its next attempt. The agent has just made an attempt; produce the updated list.
+
+Task: {{ instruction }}
+Attempt: #{{ attempt_index }} (failure budget: {{ max_failures }})
+Outcome: {{ outcome }}
+
+{% if current_memory %}Current memory (from previous attempts):
+{{ current_memory }}
+{% else %}Current memory: none yet — this is the first attempt.
+{% endif %}
+Agent trajectory:
+{{ trajectory_text }}
+
+## How to update the list
+If a memory already exists, rewrite it rather than appending: copy correct bullets unchanged, edit ones that need refining, drop ones this attempt proved wrong, and add bullets for what was just learned. Prefer a few sharp bullets over many vague ones.
+
+Two kinds of bullet are useful:
+- specific: concrete tool or API patterns, argument names, gotchas, or step sequences.
+- generic: procedural habits, such as how to proceed or how to check outputs.
+
+Look across all the failure dimensions, not only execution errors:
+- Task comprehension: if the agent acted without reading all of the task's context (e.g. replied before reading the message that prompted the request, or acted on everything instead of the filtered subset the task names), add a bullet on what to read first and why.
+- Answer submission: if the task wants a factual answer (a count, title, name, yes/no) and the agent worked it out but never returned it in the form the environment expects, add a bullet on returning the answer correctly.
+- Efficiency: if the agent did more work than needed — e.g. retrieved far more than necessary and filtered afterwards when the environment can filter or query directly — add a bullet recommending the targeted call.
+
+{% if known %}
+## What the agent is ALREADY told, before every task
+Do not spend a bullet restating any of this — it is in the agent's prompt whether you write it
+or not, and a bullet that repeats it crowds out the lesson this attempt actually taught. Write
+about it only to record something it does NOT say (an exception, an exact name it omits, an order
+it leaves implicit).
+
+{{ known }}
+{% endif %}
+## Output
+Write each bullet as a single line beginning with `- `:
+- When <situation>, <do this>[, because <the reason>].
+Keep every bullet self-contained and generalizable — no task-specific identifiers (user ids, emails, values) and nothing that must be derived while solving (e.g. "the count is X"). Output only the bullet list, starting directly with `- `. No headers, JSON, fences, or commentary.

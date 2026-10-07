@@ -1,0 +1,18 @@
+# Paper: Table 1, autoguide (tau2), rerun with gpt-5.4 for every auxiliary role (paper Section 4).
+# Rebuilt from the launch config (tau2_accumulation_gpt54aux.yaml); it matches the run snapshot.
+# Output: outputs/baselines/autoguide/memory/tau2/
+benchmark: tau2
+experiment_name: tau2
+tau2:
+  task_split: train
+  solver_mode: conversational
+  max_steps: 200
+accumulation:
+  max_failures: 4
+  num_success_to_continue: 1
+  extraction_model: gpt-5.4
+run:
+  parallel: 20
+kind: accumulation
+autoguide:
+  context_model: gpt-5.4  # DEVIATION: AutoGuide runs context identification on the agent model

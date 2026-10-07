@@ -1,0 +1,5 @@
+You'll get a snippet of a trajectory of an interactive task. Your job is to generate a brief and general summarization of the current status following 'SUMMARIZATION: '.
+Keep it broad and general, avoid any information about specific objects and locations.
+
+Now it's your turn:
+{{ trajectory }}

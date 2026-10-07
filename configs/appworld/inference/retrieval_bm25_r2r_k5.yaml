@@ -1,0 +1,14 @@
+# Paper: Table 9 R2R.
+# Output: outputs/inference/appworld/memory-use/bm25_k5_r2r/
+benchmark: appworld
+experiment_name: bm25_k5_r2r
+category: memory-use
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld/consolidated_pool.json
+  retrieval_mode: reason_then_retrieve
+run:
+  num_runs: 5
+  parallel: 40

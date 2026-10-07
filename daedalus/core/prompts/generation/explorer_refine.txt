@@ -1,0 +1,20 @@
+A task you designed earlier turned out **{{ difficulty }}** when a solver attempted it. Revise it so it lands closer to the right difficulty — challenging but solvable — while keeping it the SAME task in spirit (same goal and style). Make it slightly {{ direction }} with a small, targeted change, not a redesign; keep it grounded and natural, and re-confirm it is solvable before you emit it (produce the same specification under the same rules as your original design).
+{% if task_guidelines %}
+{{ task_guidelines }}
+
+Those rules bind the revision too. In particular, when a task came back **too_hard** the fix is
+NOT to name the records, spell out the steps, or narrow it to a listed subset — that deletes the
+work instead of easing it. Make it easier by reducing how much has to be swept or reconciled, or
+by removing one requirement, while the request stays short and still makes the solver find things
+for itself.
+{% endif %}
+The task as it stands:
+{{ current_task }}
+{% if variant_history %}
+Revisions already tried this session (do NOT repeat these):
+{% for v in variant_history %}- [{{ v.result if v.result is defined else '?' }}] {{ v.task if v.task is defined else v }}
+{% endfor %}{% endif %}{% if exploration %}
+Your earlier exploration (reuse what you already learned — you need not rediscover it):
+{{ exploration }}
+{% endif %}
+{{ action_protocol }}

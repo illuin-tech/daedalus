@@ -1,0 +1,16 @@
+---
+/** The pipeline diagram (scripts/pipeline_diagram.py), rendered as spans. */
+import diagram from "../data/pipeline-diagram.json";
+
+const Q = ["--q1", "--q2", "--q3", "--q4"];
+const style = (f: string) =>
+  f ? f.split(",").map((q, k) => `${Q[k]}:${q ? `var(--f-${q})` : "transparent"}`).join(";") : undefined;
+---
+
+<div class="pl-diagram" aria-hidden="true" style={`--chars:${diagram.width}`}>
+  <div class="pl-art">{diagram.runs.map((line) => (
+    <div>{line.map(([text, owner, role, fill]) => (owner || fill)
+      ? <span data-p={owner || undefined} class={[role, fill && "f"].filter(Boolean).join(" ") || undefined} style={style(fill)}>{text}</span>
+      : text)}</div>
+  ))}</div>
+</div>

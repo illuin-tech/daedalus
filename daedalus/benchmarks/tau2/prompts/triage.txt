@@ -1,0 +1,15 @@
+A customer-service agent failed to solve a generated task. Decide whether the failure is due to the AGENT'S CAPABILITY (the task is legitimately hard: the agent made mistakes, missed policy steps, or gave up) or a SPEC DEFECT (the task itself is broken: the scenario omits information the solution requires, contradicts the policy or the data, or the reference solution does not match what the customer asks).
+
+## Task scenario
+{{ scenario }}
+
+## Reference solution (tool calls that define the expected end state)
+{% for a in actions %}
+- {{ a.name }}({{ a.arguments }})
+{% endfor %}
+
+## The agent's failed attempt (final attempt's conversation)
+{{ trace }}
+
+Output STRICTLY one JSON object on a single line:
+{"cause": "capability" or "spec_defect", "reason": "<one short sentence>"}

@@ -1,0 +1,16 @@
+# Paper: Table 2 / Figures 1, 8 (Qwen3.6-35B-A3B, no memory).
+# Output: outputs/inference/appworld/cross-family/no-memory_qwen3.6-35b-a3b/
+benchmark: appworld
+experiment_name: no-memory_qwen3.6-35b-a3b
+category: cross-family
+agent:
+  model: openrouter/qwen/qwen3.6-35b-a3b
+appworld:
+  dataset: test_normal
+run:
+  num_runs: 5
+  parallel: 24
+provider_routing:
+  order:
+  - parasail/fp8
+  allow_fallbacks: false

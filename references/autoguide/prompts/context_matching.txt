@@ -1,0 +1,12 @@
+{{ task_description }}
+A task trajectory can be long. Therefore the assistant summarizes the status of each step.
+For different task with the same status, the summarization should be the same, therefore please ignore any information about instructions or products.
+You will be provided with the following:
+1. A list of summarizations the assistant saw in the past.
+2. A newly generated summarization.
+Please determine if any summarization from the list matches the exact same status as the newly generated one. If yes, answer the index of the corresponding summarization, for example "Answer: 2"; otherwise, "Answer: None".
+
+Seen Summarizations:
+{{ seen }}
+Newly Generated Summarization:
+{{ context }}

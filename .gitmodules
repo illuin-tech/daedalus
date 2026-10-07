@@ -1,0 +1,9 @@
+[submodule "benchmarks/appworld"]
+	path = benchmarks/appworld
+	url = https://github.com/StonyBrookNLP/appworld.git
+[submodule "benchmarks/tau2-bench"]
+	path = benchmarks/tau2-bench
+	url = https://github.com/sierra-research/tau2-bench.git
+[submodule "benchmarks/AutomationBench"]
+	path = benchmarks/AutomationBench
+	url = https://github.com/zapier/AutomationBench.git

@@ -1,0 +1,28 @@
+# Paper: Table 2 (Qwen3.8-Flash / Qwen3.6-35B-A3B bank).
+# Output: outputs/daedalus/appworld_qwen/
+benchmark: appworld
+experiment_name: appworld_qwen
+agent:
+  model: openrouter/qwen/qwen3.6-35b-a3b
+appworld:
+  dataset: train
+accumulation:
+  extraction_model: openrouter/qwen/qwen3.8-flash
+  extraction_reasoning_effort: high
+generation:
+  explorer_model: openrouter/qwen/qwen3.8-flash
+  explorer_max_turns: 26
+  explorer_turn_steering: true
+  judge_model: openrouter/qwen/qwen3.8-flash
+  num_sessions: 30
+  num_explorers: 3
+  coverage_tags_path: outputs/environment-survey/appworld/coverage_goal_train_2026-08-17_170214.txt
+  min_novelty: 0.05
+  excluded_apps:
+  - gmail
+  - amazon
+provider_routing:
+  order:
+  - parasail/fp8
+  - alibaba
+  allow_fallbacks: false

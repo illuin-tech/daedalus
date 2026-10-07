@@ -1,0 +1,43 @@
+{# Shared task-design doctrine.
+
+   Every benchmark's explorer_task_guidelines.txt used to repeat these paragraphs almost
+   word for word — 41 six-grams were common to all three files. They say nothing
+   environment-specific, so they live here once and each benchmark calls them, keeping in
+   its own file only what is genuinely bound to its environment: how it frames itself, the
+   examples for the leak rule, where difficulty actually comes from, and the genre list.
+
+   The wording is AppWorld's, verbatim, because that phrasing was the one validated by the
+   90-session run. The parameters exist only for the few nouns and examples that cannot be
+   shared; passing AppWorld's original values reproduces its file byte for byte. Line wraps
+   are AppWorld's too, so a longer argument just wraps a little differently elsewhere —
+   cosmetic, since nothing here is width-sensitive.
+#}
+{%- macro write_a_request() -%}
+**Write a request, not a specification.** One to three short sentences. A person asking for
+something does not enumerate the steps, does not spell out the edge cases, and does not paste
+in record ids. If your instruction has grown into a paragraph with semicolons and a
+step-by-step plan, it has stopped being a request.
+{%- endmacro -%}
+
+{%- macro goal_not_procedure(subject, route_noun, actor) -%}
+**State the goal; never the procedure.** Say what {{ subject }} wants to be true afterwards, or
+what they want to know. Do not sequence the work with "then", "after that", "next", "finally".
+Do not say which {{ route_noun }} or which call to use for each part. Working out the route IS the task —
+if you hand over the route, the {{ actor }} only has to type.
+{%- endmacro -%}
+
+{%- macro short_to_state(example, swept_noun, actor, verb="swept") -%}
+**Short to state is not small to do.** Keep the words brief and the work substantial: {{ example }}. Shorten the wording, never the amount of {{ swept_noun }} that has to be {{ verb }}. A request the
+{{ actor }} finishes in a handful of calls is too small however well it reads.
+{%- endmacro -%}
+
+{%- macro scope_wording(superlative, universal, timeframe) -%}
+Say scope the way people do — a superlative ({{ superlative }}), a universal ({{ universal }}), or a relative time frame ({{ timeframe }}). Each is short to write and
+expensive to get right, so treat them as your main source of difficulty, not as tricks to avoid.
+{%- endmacro -%}
+
+{%- macro grounding(conditions_noun, example) -%}
+**Ground it in what is really there.** Design around records you actually read, never invented
+ones — and when you write {{ conditions_noun }}, assert only what the request itself determines.
+{{ example }}
+{%- endmacro -%}

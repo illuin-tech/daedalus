@@ -1,0 +1,15 @@
+# Paper: Table 1, erl (tau2).
+# Output: outputs/baselines/erl/memory/tau2/
+benchmark: tau2
+experiment_name: tau2
+tau2:
+  task_split: train
+  solver_mode: conversational
+  max_steps: 40
+accumulation:
+  max_failures: 1
+  num_success_to_continue: 1
+  extraction_reasoning_effort: high
+run:
+  parallel: 30
+kind: accumulation

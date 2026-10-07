@@ -1,0 +1,14 @@
+# Paper: Table 6 (no dedup, no consolidation).
+# Output: outputs/inference/appworld/memory-use/all-at-start_raw/
+benchmark: appworld
+experiment_name: all-at-start_raw
+category: memory-use
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld/pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 30

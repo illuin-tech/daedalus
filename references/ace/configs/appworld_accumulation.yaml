@@ -1,0 +1,13 @@
+# Paper: Table 1, ace (appworld).
+# Output: outputs/baselines/ace/memory/appworld/
+benchmark: appworld
+experiment_name: appworld
+appworld:
+  dataset: train
+accumulation:
+  max_failures: 1
+  num_success_to_continue: 1
+  extraction_model: gpt-5.4-mini
+kind: accumulation
+ace:
+  playbook_path: outputs/baselines/ace/memory/appworld/playbook.txt

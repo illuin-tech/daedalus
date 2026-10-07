@@ -1,0 +1,15 @@
+# Paper: Table 1, reasoningbank (appworld).
+# Output: outputs/baselines/reasoningbank/memory/appworld/
+benchmark: appworld
+experiment_name: appworld
+appworld:
+  dataset: train
+accumulation:
+  max_failures: 1
+  num_success_to_continue: 1
+  extraction_reasoning_effort: high
+run:
+  parallel: 5
+kind: accumulation
+reasoningbank:
+  bank_path: outputs/baselines/reasoningbank/memory/appworld/pool.json

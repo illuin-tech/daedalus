@@ -1,0 +1,17 @@
+# Paper: Table 1 DAEDALUS bank (τ², one session per training task).
+# Output: outputs/daedalus/tau2/ (its consolidated_pool.json was reconsolidated over all 74
+# sessions). The run was executed as 50 sessions followed by a --resume of 24; the run's
+# config.yaml is the snapshot of that resume (num_sessions: 24), identical to this config
+# otherwise.
+benchmark: tau2
+experiment_name: tau2
+tau2:
+  max_steps: 200
+  solver_mode: conversational
+accumulation:
+  extraction_reasoning_effort: high
+generation:
+  coverage_tags_path: outputs/environment-survey/tau2/coverage_goal_retail_2026-08-18_230105.txt
+  num_sessions: 74
+  reject_multi_item_exchange: true
+  withhold_discoverable_ids: true

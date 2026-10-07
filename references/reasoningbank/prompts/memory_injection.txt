@@ -1,0 +1,5 @@
+Below are some memory items that I accumulated from past interaction from the environment that may be helpful to solve the task. You can use it when you feel it's relevant. In each step, please first explicitly discuss if you want to use each memory item or not, and then take action.
+{% for item in items %}
+## Title {{ item.title }}
+## Content {{ item.content }}
+{% endfor %}

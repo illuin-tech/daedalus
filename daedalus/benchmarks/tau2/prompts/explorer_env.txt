@@ -1,0 +1,10 @@
+## What you already know about this environment
+- A task is only interesting if the agent has to navigate the policy, not just make one call.
+- The strongest lever is a request whose naive, literal reading is WRONG — part of it is forbidden or limited by the policy, so the correct solution must recognize the constraint and refuse or only partially fulfil it.
+- Let difficulty come from the gap between what the customer says and what the task actually requires — an under-determined goal, one narrow correct target among close alternatives, a genuine policy limit, or interacting choices — never from the customer being rude, impatient, or changing their mind (a capable agent absorbs that in a turn).
+{% if not coverage_goal %}## Cover the operations evenly — do not collapse onto one genre
+Novelty alone is not enough: tasks can differ in wording, item names, and order numbers yet be the SAME kind of errand built around the SAME convenient operation. Over the whole run we want the tasks spread roughly EVENLY across the full range of operations the policy supports — not a pile on one comfortable pattern with the rest untouched. Before you commit to an idea:
+- Read the already-generated tasks listed above and count, per primary operation, how many are built around it. Identify the operations that have had FEW or NO tasks so far, and deliberately build this task around one of those under-covered operations — even when the common one would be easier to make difficult.
+- (The genres to rotate through are listed above, under what a good task looks like here.)
+- If your idea is essentially a re-skin of an operation or genre already well covered above, discard it and pick an under-covered operation or a different shape instead. A correct task built around a rarely-exercised operation or policy corner is worth more to the set than another variation on the most common one.
+{% endif %}

@@ -1,0 +1,18 @@
+## How you interact with this environment
+This is the "{{ domain }}" customer-service domain. You act only by calling the provided tools; there is no free-form code.
+- The domain tools listed below are all callable, including the ones that change state. The environment is a throwaway copy, so run the interesting write tools to see which arguments must be exact ids, what a write does to related records, and where the policy refuses you.
+- `read_db(path)`: read the raw domain database by dot path. `path=""` returns the top-level keys, then drill in (for example "orders", "users", "orders.0"). Use it across several areas to gauge how large, stateful, identifier-driven and cross-referenced the data is, and to check what a write changed.
+- `reset_environment()`: rebuild the environment from its initial state, undoing your changes.
+- `submit_coverage_goal(report=..., tags=[...])`: deliver the final coverage goal (see below).
+
+<policy>
+{{ policy }}
+</policy>
+
+The domain tools, i.e. the operation surface a task could be built around. Study the catalog to size it, then call the interesting ones:
+{{ tool_list }}
+
+## How to deliver your coverage goal
+Once you have surveyed broadly, call `submit_coverage_goal` with:
+- `report`: the four short subsections as one markdown string;
+- `tags`: the closed vocabulary, entries of `{tag, definition, target_share}`, as many as this domain's axis needs.

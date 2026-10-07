@@ -1,0 +1,100 @@
+---
+import "../styles/global.css";
+import regularFont from "../fonts/JetBrainsMono-Regular.woff2?url";  // the same bundled file as global.css's
+
+export interface Section {
+  id: string;
+  title: string;
+  /** Shown instead of the running number, e.g. "A". */
+  num?: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  sections: Section[];
+  links: { label: string; href: string }[];
+}
+
+const { title, description, sections, links } = Astro.props;
+// Sections are numbered from 00 (the tl;dr).
+const num = (i: number) => String(i).padStart(2, "0");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <title>{title}</title>
+    <link rel="preload" href={regularFont} as="font" type="font/woff2" crossorigin />
+    <script is:inline>
+      // Before first paint, so a saved theme never flashes the other one.
+      try {
+        const t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <div class="page">
+      <aside class="sidebar" aria-label="Contents">
+        <div class="sidebar-inner">
+          <div class="brand">DAEDALUS</div>
+          <div class="rule" aria-hidden="true">────────────────────</div>
+          <ol class="toc">
+            {sections.map((s, i) => (
+              <li data-target={s.id}>
+                <span class="caret" aria-hidden="true">›</span>
+                <a href={`#${s.id}`}><span class="num">{s.num ?? num(i)}</span>{s.title}</a>
+              </li>
+            ))}
+          </ol>
+          <div class="rule" aria-hidden="true">────────────────────</div>
+          <div class="links">
+            {links.map((l) => <div><a href={l.href} target="_blank" rel="noopener">↗ {l.label}</a></div>)}
+          </div>
+        </div>
+      </aside>
+
+      <main class="content">
+        <div class="topbar">
+          <button class="share" type="button" aria-label="Share this blog post">
+            [<span class="value">share this blog post</span>]
+          </button>
+          <button class="theme-toggle" type="button" aria-label="Switch color theme">
+            [theme: <span class="value">auto</span>]
+          </button>
+        </div>
+
+        <slot name="header" />
+
+        <details class="toc-inline">
+          <summary>contents</summary>
+          <ol class="toc">
+            {sections.map((s, i) => (
+              <li data-target={s.id}>
+                <span class="caret" aria-hidden="true">›</span>
+                <a href={`#${s.id}`}><span class="num">{s.num ?? num(i)}</span>{s.title}</a>
+              </li>
+            ))}
+          </ol>
+        </details>
+
+        <slot />
+
+        <footer class="footer">
+          <p>Illuin Technology · 2026 · <a href="https://github.com/illuin-tech/daedalus" target="_blank" rel="noopener">illuin-tech/daedalus</a></p>
+        </footer>
+      </main>
+    </div>
+
+    <script>
+      import "../scripts/theme";
+      import "../scripts/toc";
+      import "../scripts/share";
+    </script>
+  </body>
+</html>

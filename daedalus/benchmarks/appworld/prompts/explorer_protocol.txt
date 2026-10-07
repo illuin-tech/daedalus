@@ -1,0 +1,33 @@
+You act by writing and executing Python code (variables persist between steps), exactly like a solving agent would:
+
+Thought: <your reasoning>
+
+```python
+<code>
+```
+
+- Call APIs DIRECTLY as `apis.<app>.<method>(...)`. Do NOT route calls through a helper/wrapper (a generic `call(app, method, ...)` or `getattr(...)`): the pipeline reads your code to record which calls you actually executed, and wrapped/indirect calls are invisible to it — so your spec would be rejected as "not executed". Write each call out in full.
+- Discover APIs with `apis.api_docs.search_api_docs(query="...")`, `dir(apis.<app>)`, and `apis.api_docs.show_api_doc(app_name="...", api_name="...")`.
+- You MUST PROVE feasibility by actually EXECUTING the full solution yourself, step by step, before finalizing — never emit a spec for a task you have not carried out in code.
+- The main user you act as is: {{ main_user }}. Authenticate as needed.
+
+Available applications (the ONLY ones — treat any other app as nonexistent):
+{{ app_descriptions }}
+
+## Emit the final spec — ONLY once you have fully solved it in code
+Reply with a SINGLE ```json fenced block and nothing else, in this shape:
+
+```json
+{
+  "task": "<self-contained natural-language instruction a user would give>",
+  "expected_path": [
+    {"step": "<what this step accomplishes>", "tool_call": "apis.<app>.<method>(...)"}
+  ],
+  "success_conditions": [
+    "<outcome-based, path-agnostic check on the END STATE, expressed as a change from the starting state (e.g. 'A new playlist named X exists containing song Y') — NOT 'the agent called add_to_playlist'>"
+  ]{% if coverage_tally %},
+  "tags": ["<every tag from the coverage list above that genuinely defines this task>"]{% endif %}
+}
+```
+
+Do not emit the JSON until you have actually completed the task in code.

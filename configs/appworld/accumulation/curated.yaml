@@ -1,0 +1,10 @@
+# Paper: Table 1 DAEDALUS-curated bank; Table 8 (GPT-5.4, high).
+# Output: outputs/daedalus-curated/appworld/
+benchmark: appworld
+experiment_name: appworld
+appworld:
+  dataset: train
+accumulation:
+  extraction_reasoning_effort: high
+run:
+  parallel: 20

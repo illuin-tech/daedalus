@@ -1,0 +1,7 @@
+{{ task_description }}. You will be equipped with the following resources:
+1. A list of action guidelines with valuable guidelines.
+2. Trajectory history, which includes recent observations and actions.
+Not all guidelines are useful to generate the next action. Please select the guidelines that are useful and relevant to the next action given the trajectory and recent observations. To generate the next action, which guidelines from the provided guidelines are most useful to directly tell you what to do for the next action? You can select up to {{ k }} guidelines, and put the indices of the selected guidelines in a python list. For example if you select guideline 1, 5, answer: [1, 5]. If none of them are useful for generating the next action, answer the empty list [].
+
+{{ guidelines }}
+{{ trajectory }}

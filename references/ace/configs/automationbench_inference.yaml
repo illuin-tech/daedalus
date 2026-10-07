@@ -1,0 +1,17 @@
+# Paper: Table 1, ace (automationbench).
+# Output: outputs/baselines/ace/inference/automationbench/
+# NOTE: that run set `ace.playbook_preamble: true`, an option not yet in this code.
+benchmark: automationbench
+experiment_name: automationbench
+agent:
+  model: gpt-5.6-luna
+  reasoning_effort: medium
+automationbench:
+  split_file: daedalus/benchmarks/automationbench/splits/operations_30_70.json
+  split: test
+run:
+  num_runs: 5
+  parallel: 6
+kind: inference
+ace:
+  playbook_path: outputs/baselines/ace/memory/automationbench/playbook.txt

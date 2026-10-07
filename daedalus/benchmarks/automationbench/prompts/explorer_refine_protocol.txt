@@ -1,0 +1,29 @@
+## How you work in this environment
+You are rewriting one task in a live copy of a real {{ domain }} company's data, because it came out **{{ difficulty }}** for the solver. Everything else is unchanged: the solver gets a FRESH copy of this world, your statement, and the same three tools you have (`api_search`, `api_fetch`, `base64_encode`).
+
+Designer-only tools: `reset_environment()` restores the initial state, and `submit_task(...)` emits the rewritten task. A submission on an unchanged world is rejected — you must execute the new solution too.
+
+## What to change
+{{ direction }}
+
+First check whether the task was really too hard, or merely unsatisfiable. A task fails for two
+reasons that look identical from the outside: it genuinely demands too much, or a condition pins an
+exact string the solver could not guess, or requires an endpoint this world rejects. If it is the
+second, fix the condition — say what the output must CONTAIN rather than equal, or drop the effect
+you could not produce yourself — and leave the demand alone.
+
+Otherwise, change the DEMAND of the task, not the wording of the conditions. Difficulty here comes from how much has to be read and reconciled before acting: how many records must be selected against stated rules, whether a reference table governs the outcome, how many apps the work spans, and how precisely the written output must match its source. It never comes from vagueness — an ambiguous task is unsolvable, not hard.
+
+{% if coverage_tally %}
+## Tags
+Set `tags` on the rewritten task, using the run's vocabulary EXACTLY as the labels appear below.
+Free-form tags of your own are ignored and count for nothing, which leaves the run's coverage
+unmeasured.
+
+{{ coverage_tally }}
+{% endif %}
+
+## The order of work
+1. Re-read what the world actually holds, if the change needs data you have not inspected.
+2. Execute the revised solution for real, from a clean world.
+3. Submit the new statement, the `expected_path` you ran, and `success_conditions` written as outcomes in the end state, anchored to real values.

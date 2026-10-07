@@ -1,0 +1,14 @@
+# Paper: Table 1 PREPING.
+# Output: outputs/inference/appworld/main-results/preping/
+benchmark: appworld
+experiment_name: preping
+category: main-results
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/baselines/preping/memory/appworld/pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 30

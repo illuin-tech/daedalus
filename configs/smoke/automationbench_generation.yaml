@@ -1,0 +1,22 @@
+# Smoke test: one short self-play session on AutomationBench (tests/smoke_automationbench.py).
+benchmark: automationbench
+experiment_name: automationbench_smoke_generation
+agent:
+  model: gpt-5.6-luna
+  reasoning_effort: medium
+automationbench:
+  domains: [simple]
+  max_steps: 15
+generation:
+  explorer_model: gpt-5.6-terra
+  judge_model: gpt-5.6-terra
+  explorer_max_turns: 12
+  num_sessions: 1
+  num_explorers: 1
+  max_refinements: 0
+  coverage_tags: false
+accumulation:
+  extraction_model: gpt-5.6-terra
+  extraction_reasoning_effort: high
+  max_failures: 1
+  num_success_to_continue: 1

@@ -1,0 +1,14 @@
+# Paper: Table 3 (C).
+# Output: outputs/inference/appworld/pipeline-ablation/C_solver-traces/
+benchmark: appworld
+experiment_name: C_solver-traces
+category: pipeline-ablation
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld_ablation-C/consolidated_pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 3

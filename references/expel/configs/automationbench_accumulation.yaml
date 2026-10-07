@@ -1,0 +1,19 @@
+# Paper: Table 1, expel (automationbench).
+# Output: outputs/baselines/expel/memory/automationbench/
+benchmark: automationbench
+experiment_name: automationbench
+agent:
+  model: gpt-5.6-luna
+  reasoning_effort: medium
+automationbench:
+  split_file: daedalus/benchmarks/automationbench/splits/operations_30_70.json
+  split: train
+accumulation:
+  max_failures: 4
+  num_success_to_continue: 1
+  extraction_model: gpt-5.4-mini
+run:
+  parallel: 8
+kind: accumulation
+expel:
+  extraction_model: gpt-5.6-terra

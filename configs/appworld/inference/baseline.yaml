@@ -1,0 +1,10 @@
+# Paper: Table 1 no-memory baseline.
+# Output: outputs/inference/appworld/main-results/no-memory/
+benchmark: appworld
+experiment_name: no-memory
+category: main-results
+appworld:
+  dataset: test_normal
+run:
+  num_runs: 5
+  parallel: 20

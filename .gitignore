@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Benchmark data (AppWorld's is licensed, not redistributable); root only, so that
+# blogpost/src/data/ is kept
+/data/
+
+# Experiment outputs: download the illuin/daedalus-traces dataset as outputs/ (see README.md).
+outputs/*
+!outputs/.gitkeep
+outputs.zip
+# Unanonymized copy of outputs/ (never ship)
+outputs-raw/
+outputs-raw.zip
+outputs-release/*
+
+# Local configs
+configs/private/
+
+# Secrets
+.env
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
+.tmp/
+
+# Hugging Face upload folder (built from outputs-release/)
+/hf-dataset/
+
+# Claude Code guidance, kept local
+/CLAUDE.md

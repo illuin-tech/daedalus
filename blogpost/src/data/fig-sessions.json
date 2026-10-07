@@ -1,0 +1,133 @@
+{
+ "source": {
+  "script": "plots/scripts/num_sessions.py --benchmark appworld --split test_normal --model gpt-5.4-mini --generation-folder outputs/generation/appworld_90sessions --generation-folder outputs/generation/appworld_90sessions_scaling",
+  "outputs": [
+   "appworld_baseline",
+   "appworld_generation_90_scaling",
+   "appworld_generation_90_taskrealism_atstart",
+   "appworld_generation_90_taskrealism_atstart_first1",
+   "appworld_generation_90_taskrealism_atstart_first10",
+   "appworld_generation_90_taskrealism_atstart_first5",
+   "appworld_generation_90_taskrealism_atstart_first50"
+  ]
+ },
+ "x": {
+  "label": "number of sessions",
+  "scale": "x**0.5 (0 = no memory)"
+ },
+ "y": {
+  "label": "mean success rate / pass^5",
+  "unit": "%"
+ },
+ "y2": {
+  "label": "number of heuristics",
+  "range": [
+   0,
+   92
+  ]
+ },
+ "series": {
+  "msr": "mean success rate",
+  "pass_k": "pass^5"
+ },
+ "k": 5,
+ "notes": {
+  "pool_size_override": {
+   "consolidated_pool_first50": 54
+  },
+  "baseline": "sessions = 0 is the memory-off baseline (hollow mark)"
+ },
+ "points": [
+  {
+   "sessions": 0,
+   "msr": 44.286,
+   "msr_se": 1.075,
+   "pass_k": 14.881,
+   "pass_k_se": 2.754,
+   "pool_size": null,
+   "pool_size_overridden": false,
+   "banked": 0,
+   "n_runs": 5,
+   "pool": "\u2014",
+   "run": "appworld_baseline"
+  },
+  {
+   "sessions": 1,
+   "msr": 43.333,
+   "msr_se": 1.104,
+   "pass_k": 17.857,
+   "pass_k_se": 2.964,
+   "pool_size": 3,
+   "pool_size_overridden": false,
+   "banked": 1,
+   "n_runs": 5,
+   "pool": "consolidated_pool_first1.json",
+   "run": "appworld_generation_90_taskrealism_atstart_first1"
+  },
+  {
+   "sessions": 5,
+   "msr": 52.738,
+   "msr_se": 0.812,
+   "pass_k": 21.429,
+   "pass_k_se": 3.175,
+   "pool_size": 19,
+   "pool_size_overridden": false,
+   "banked": 5,
+   "n_runs": 5,
+   "pool": "consolidated_pool_first5.json",
+   "run": "appworld_generation_90_taskrealism_atstart_first5"
+  },
+  {
+   "sessions": 10,
+   "msr": 52.619,
+   "msr_se": 1.721,
+   "pass_k": 24.405,
+   "pass_k_se": 3.324,
+   "pool_size": 18,
+   "pool_size_overridden": false,
+   "banked": 10,
+   "n_runs": 5,
+   "pool": "consolidated_pool_first10.json",
+   "run": "appworld_generation_90_taskrealism_atstart_first10"
+  },
+  {
+   "sessions": 50,
+   "msr": 54.643,
+   "msr_se": 1.071,
+   "pass_k": 26.19,
+   "pass_k_se": 3.402,
+   "pool_size": 54,
+   "pool_size_overridden": true,
+   "banked": 50,
+   "n_runs": 5,
+   "pool": "consolidated_pool_first50.json",
+   "run": "appworld_generation_90_taskrealism_atstart_first50"
+  },
+  {
+   "sessions": 90,
+   "msr": 60.238,
+   "msr_se": 0.891,
+   "pass_k": 32.143,
+   "pass_k_se": 3.614,
+   "pool_size": 66,
+   "pool_size_overridden": false,
+   "banked": 81,
+   "n_runs": 5,
+   "pool": "consolidated_pool.json",
+   "run": "appworld_generation_90_taskrealism_atstart"
+  },
+  {
+   "sessions": 140,
+   "msr": 53.69,
+   "msr_se": 0.739,
+   "pass_k": 30.952,
+   "pass_k_se": 3.577,
+   "pool_size": 87,
+   "pool_size_overridden": false,
+   "banked": 129,
+   "n_runs": 5,
+   "pool": "consolidated_pool.json",
+   "run": "appworld_generation_90_scaling"
+  }
+ ]
+}

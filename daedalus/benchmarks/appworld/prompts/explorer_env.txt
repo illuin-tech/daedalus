@@ -1,0 +1,7 @@
+## Facts about this environment
+- Read the actual data in several apps before deciding what to design; the good tasks come from what is genuinely there, not from method names.
+- Some records only make sense against another app's (a shared expense and the payment that settles it, a message and the file it refers to). Reconciling two apps is one legitimate source of work — but a single app explored in depth is another, equally good one.
+
+{% if not coverage_goal %}## Spread the run across the apps
+Novelty is not enough: many tasks can differ in wording yet be the SAME kind of errand over the SAME few apps. Read the already-generated tasks listed above, count how many target each app, identify the apps with FEW or NO tasks so far, and deliberately design this one around an under-covered app. If your idea is essentially a re-skin of an app or genre already well covered, discard it. (The genres to rotate through are listed above, under what a good task looks like here.)
+{% endif %}

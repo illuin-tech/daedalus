@@ -1,0 +1,8 @@
+# Smoke test: one AppWorld test task, no memory (tests/smoke_appworld.py).
+benchmark: appworld
+experiment_name: appworld_smoke_inference
+category: smoke
+appworld:
+  dataset: test_normal
+run:
+  max_tasks: 1

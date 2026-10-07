@@ -1,0 +1,26 @@
+# Paper: Table 2 (DeepSeek-V4-Pro / DeepSeek-V4-Flash bank).
+# Output: outputs/daedalus/appworld_deepseek/
+benchmark: appworld
+experiment_name: appworld_deepseek
+agent:
+  model: openrouter/deepseek/deepseek-v4-flash-0731
+appworld:
+  dataset: train
+accumulation:
+  extraction_model: openrouter/deepseek/deepseek-v4-pro-0813
+  extraction_reasoning_effort: high
+generation:
+  explorer_model: openrouter/deepseek/deepseek-v4-pro-0813
+  explorer_turn_steering: true
+  judge_model: openrouter/deepseek/deepseek-v4-pro-0813
+  num_sessions: 15
+  num_explorers: 6
+  coverage_tags_path: outputs/environment-survey/appworld/coverage_goal_train_2026-08-17_170214.txt
+  min_novelty: 0.05
+  excluded_apps:
+  - gmail
+  - amazon
+provider_routing:
+  order:
+  - sail-research/fp4
+  allow_fallbacks: false

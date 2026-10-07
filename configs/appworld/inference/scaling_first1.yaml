@@ -1,0 +1,14 @@
+# Paper: Figure 6.
+# Output: outputs/inference/appworld/exploration-budget/1-sessions/
+benchmark: appworld
+experiment_name: 1-sessions
+category: exploration-budget
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld/consolidated_pool_first1.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 30

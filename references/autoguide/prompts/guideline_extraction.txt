@@ -1,0 +1,11 @@
+{{ task_description }}. You will be provided with a desired and undesired trajectory of the same task. What is the first action that differs between the two trajectories? Why do you think it makes one trajectory failed and the other successful? Based on your answer, generate an action guideline to make future task avoid the same mistake. The guideline should specify what to do in what situation in the format of "When in what status, (optional: if you want to ...) you should (or should not)... (optional: a short example for demonstration. )". For the 'When in what status' part, directly use the words in SUMMARIZATION.
+Here are two examples:
+Example 1: When looking for an object, if you want to find a kitchen-related object like a spatula, you should start from the most possible locations.
+Example 2: When looking for an object and found the desired object at the location, You should only take the exact object that you want.
+Strictly follow what the desired trajectory does and never suggest actions that the desired trajectory didn't do. When referring to actions, use the allowed action format. You should make your answer concise, limit your answer within 128 tokens, and put your answer in this format: 'Reasoning: ... Guideline: ...'.
+
+SUMMARIZATION: {{ context }}
+Desired Trajectory:
+{{ desired }}
+Undesired Trajectory:
+{{ undesired }}

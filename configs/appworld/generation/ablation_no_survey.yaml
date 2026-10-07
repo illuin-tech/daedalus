@@ -1,0 +1,13 @@
+# Paper: Table 3 (E).
+# Output: outputs/daedalus/appworld_ablation-E/
+benchmark: appworld
+experiment_name: appworld_ablation-E
+appworld:
+  dataset: train
+accumulation:
+  extraction_reasoning_effort: high
+generation:
+  coverage_tags: false
+  excluded_apps:
+  - gmail
+  - amazon

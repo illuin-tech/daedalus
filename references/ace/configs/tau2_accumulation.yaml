@@ -1,0 +1,15 @@
+# Paper: Table 1, ace (tau2).
+# Output: outputs/baselines/ace/memory/tau2/
+benchmark: tau2
+experiment_name: tau2
+tau2:
+  task_split: train
+  solver_mode: conversational
+  max_steps: 200
+accumulation:
+  max_failures: 1
+  num_success_to_continue: 1
+  extraction_model: gpt-5.4-mini
+kind: accumulation
+ace:
+  playbook_path: outputs/baselines/ace/memory/tau2/playbook.txt

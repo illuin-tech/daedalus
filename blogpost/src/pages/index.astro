@@ -1,0 +1,474 @@
+---
+import Post from "../layouts/Post.astro";
+import Maze from "../components/Maze.astro";
+import Pipeline from "../components/Pipeline.astro";
+import DiagramStyles from "../components/DiagramStyles.astro";
+import MemoryExample from "../components/MemoryExample.astro";
+import Regimes from "../components/Regimes.astro";
+import Myth from "../components/Myth.astro";
+import ResultsTable from "../components/ResultsTable.astro";
+import TransferMatrix from "../components/TransferMatrix.astro";
+import Ablation from "../components/Ablation.astro";
+import SmallTables from "../components/SmallTables.astro";
+import Injection from "../components/Injection.astro";
+import Takeaway from "../components/Takeaway.astro";
+import figure from "../data/correlation.json";
+import { LEGEND_ORDER, SHAPES, SYMBOLS } from "../data/models";
+import { PAPERS } from "../data/tables";
+
+const sections = [
+  { id: "tldr", title: "tl;dr" },
+  { id: "why", title: "Why agents need memory" },
+  { id: "pipeline", title: "How DAEDALUS builds its memory" },
+  { id: "example", title: "The memory at work" },
+  { id: "results", title: "Results" },
+  { id: "transfer", title: "Across model families" },
+  { id: "generation", title: "What makes generation work" },
+  { id: "inference", title: "Using the memory" },
+  { id: "ranking", title: "Ranking models with generated tasks" },
+  { id: "takeaways", title: "Key takeaways" },
+  { id: "cite", title: "Citation", num: "@" },
+  { id: "appendix", title: "Appendix", num: "A" },
+];
+
+const ARXIV = "https://arxiv.org/abs/2610.08048";
+const CODE = "https://github.com/illuin-tech/daedalus";
+const DATASET = "https://hf.co/datasets/illuin/daedalus-traces";
+const ILLUIN = "https://www.illuin.tech/";
+// Files in public/ are served under the site's base path (astro.config.mjs: /daedalus).
+const asset = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/${path}`;
+
+const links = [
+  { label: "paper", href: ARXIV },
+  { label: "code", href: CODE },
+  { label: "dataset", href: DATASET },
+];
+
+// The links before the citation: one box each.
+const resources = [
+  { label: "paper", title: "arXiv preprint", href: ARXIV, url: ARXIV.replace("https://", "") },
+  { label: "code", title: "GitHub repository", href: CODE, url: CODE.replace("https://", "") },
+  { label: "dataset", title: "🤗 Hugging Face dataset", href: DATASET, url: DATASET.replace("https://", "") },
+  { label: "lab", title: "Illuin Technology", href: ILLUIN, url: ILLUIN.replace(/https:\/\/(www\.)?|\/$/g, ""), logo: true },
+];
+
+// The benchmarks, linked to their papers.
+const BENCH = {
+  appworld: "https://arxiv.org/abs/2407.18901",
+  tau2: "https://arxiv.org/abs/2506.07982",
+  ab: "https://arxiv.org/abs/2604.18934",
+};
+
+// Hovering (or tapping) a name shows its LinkedIn, X and email icons over it, each only if set.
+const authors: { name: string; marks: string; linkedin?: string; x?: string; mail?: string }[] = [
+  { name: "Antoine Edy", marks: "*†", linkedin: "https://www.linkedin.com/in/antoine-edy/", x: "https://x.com/antoine_edy", mail: "antoine.edy@illuin.tech" },
+  { name: "Max Conti", marks: "*", linkedin: "https://www.linkedin.com/in/max-conti/", x: "https://x.com/mlpc123" },
+  { name: "Victor Xing", marks: "*", linkedin: "https://www.linkedin.com/in/vxing/", x: "https://x.com/victortxing", mail: "victor.xing@illuin.tech" },
+  { name: "Marc-Antoine Allard", marks: "", linkedin: "https://www.linkedin.com/in/marc-antoine-allard-a81178213/", x: "https://x.com/marcantallard" },
+  { name: "Nawfal Benhamdane", marks: "", linkedin: "https://www.linkedin.com/in/nawfal-benhamdane-6298b1285/" },
+  { name: "Gautier Viaud", marks: "", linkedin: "https://www.linkedin.com/in/gautier-viaud/" },
+];
+// Simple Icons (CC0) and Material Icons' "mail" (Apache 2.0), 24×24.
+const ICON = {
+  mail: "M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z",
+  linkedin: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z",
+  x: "M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z",
+};
+const SOCIAL = [
+  { key: "linkedin", label: "on LinkedIn", href: (v: string) => v },
+  { key: "x", label: "on X", href: (v: string) => v },
+  { key: "mail", label: "by email", href: (v: string) => `mailto:${v}` },
+] as const;
+
+// "Illuin Technology", one colour per letter, around the logo's colour wheel.
+const ILLUIN_COLORS = ["#e5332a", "#ef6a1f", "#f39200", "#e8ac00", "#b8b91a", "#8cc63f", "#3fae49", "#1ba39c",
+  "#1592b5", "#2a6ebb", "#3b55a6", "#3b3f98", "#5a2f8f", "#7b2c91", "#a3237f", "#c2187a"];
+let letter = 0;
+const illuinName = [..."Illuin Technology"].map((ch) =>
+  ch === " " ? { ch } : { ch, color: ILLUIN_COLORS[letter++ % ILLUIN_COLORS.length] });
+
+const bibtex = `@misc{edy2026daedalus,
+  title         = {{DAEDALUS}: Bootstrapping Agent Memory from Self-Generated Tasks},
+  author        = {${authors.map((a) => { const w = a.name.split(" "); return `${w.at(-1)}, ${w.slice(0, -1).join(" ")}`; }).join(" and ")}},
+  year          = {2026},
+  eprint        = {${ARXIV.split("/").at(-1)}},
+  archivePrefix = {arXiv},
+  url           = {${ARXIV}}
+}`;
+
+const { msr, pass3 } = figure.statistics;
+const tau = (s: { tau: number }) => s.tau.toFixed(2);
+const pct = (v: number) => (v * 100).toFixed(1);
+
+// The figure's data as an aligned plain-text table (the table view under the chart).
+const cols = [24, 12, 12, 12, 12];
+const row = (cells: string[]) =>
+  cells.map((c, i) => (i === 0 ? c.padEnd(cols[i]) : c.padStart(cols[i]))).join("");
+const header = row(["model", "MSR aw", "MSR gen", "pass³ aw", "pass³ gen"]);
+const tableRows = LEGEND_ORDER.map((id) => {
+  const m = figure.models.find((x) => x.id === id)!;
+  return row([id, pct(m.msr.real), pct(m.msr.generated), pct(m.pass3.real), pct(m.pass3.generated)]);
+});
+const table = [header, "─".repeat(header.length), ...tableRows, "", "aw = AppWorld test_normal · gen = DAEDALUS-generated tasks · values in %"].join("\n");
+---
+
+<Post
+  title="DAEDALUS: Bootstrapping Agent Memory from Self-Generated Tasks"
+  description="DAEDALUS builds reusable agent memory from self-generated tasks, without training tasks or an oracle verifier."
+  sections={sections}
+  links={links}
+>
+  <header slot="header" class="title">
+    <Maze class="maze--wide" lines={["daedalus"]} seed={1937} />
+    <Maze class="maze--narrow" lines={["daed", "alus"]} seed={1937} gates={[0, 14]} route={2.2} />
+    <h1>DAEDALUS</h1>
+    <p class="subtitle">Bootstrapping Agent Memory from Self-Generated Tasks</p>
+    <p class="authors">
+      {authors.map((a, i) => (
+        <>
+          {i > 0 && <span class="sep"> · </span>}
+          <span class="author"><span class="author-name" tabindex={SOCIAL.some((m) => a[m.key]) ? 0 : undefined}><span class="nm">{a.name}</span>{SOCIAL.some((m) => a[m.key]) && <span class="socials">{SOCIAL.map((m) => a[m.key] && (
+            <a class={`social social-${m.key}`} href={m.href(a[m.key]!)} target={m.key === "mail" ? undefined : "_blank"} rel="noopener"
+              aria-label={`${a.name} ${m.label}`} title={m.key === "mail" ? a.mail : `${a.name} ${m.label}`}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d={ICON[m.key]} /></svg>
+            </a>
+          ))}</span>}</span>{a.marks && <sup class="teal">{a.marks}</sup>}</span>
+        </>
+      ))}
+    </p>
+    <div class="affil"><a class="illuin" href={ILLUIN} target="_blank" rel="noopener"><img src={asset("illuin-logo.svg")} alt="" width="262" height="205" /><span class="rainbow">{illuinName.map((l) => <span style={l.color && `color:${l.color}`}>{l.ch}</span>)}</span></a> <br /> <span class="teal">*</span> equal contribution · <span class="teal">†</span> corresponding author</div>
+    <nav class="buttons" aria-label="Links">
+      {links.map((l) => <a href={l.href} target="_blank" rel="noopener">{l.label}</a>)}
+    </nav>
+  </header>
+
+  <Myth />
+
+  <figure class="box chart-fig teaser">
+    <span class="label"><b>fig. 1</b><span class="long"> Using DAEDALUS on 7 base agents (AppWorld)</span></span>
+    <div id="families-chart" class="chart" role="img" aria-label="For seven models, mean success rate against mean turns per task, without memory and with the DAEDALUS memory: every model moves up and to the left."></div>
+    <figcaption>
+      One DAEDALUS memory, generated on AppWorld, makes seven base agents from six model families
+      succeed more often, in fewer turns. AppWorld test_normal, five runs each. Hollow: no
+      memory; filled: with the DAEDALUS memory. Up is more success, left is fewer turns.
+    </figcaption>
+  </figure>
+
+  <section id="tldr">
+    <h2><span class="num">00</span><span class="text">tl;dr</span></h2>
+    <div class="box tldr">
+      <ul class="points">
+        <li>LLM agents entering a new environment lack its operational knowledge, and repeat the same mistakes from task to task.</li>
+        <li><strong>DAEDALUS</strong> builds them a reusable memory with <em>no training tasks and no oracle verifier</em>: an explorer invents tasks that are hard but solvable, a solver attempts them, and each failure yields a heuristic, kept only once the solver succeeds with it repeatedly.</li>
+        <li>On <a class="ref" href={BENCH.appworld} target="_blank" rel="noopener">AppWorld</a>, <a class="ref" href={BENCH.tau2} target="_blank" rel="noopener">τ²-bench</a> and <a class="ref" href={BENCH.ab} target="_blank" rel="noopener">AutomationBench</a>, the memory adds up to <strong>+15.9 points</strong> of mean success rate over no memory, and raises pass^5 (the share of tasks solved in all five runs) by up to <strong>2.2×</strong>.</li>
+        <li>That makes it the best method without training tasks, and competitive with methods that learn from curated ones, at a lower inference cost than most of them.</li>
+      </ul>
+    </div>
+    <p>
+      <span aria-hidden="true"></span> Along with the paper and the code, we also release <u>every</u> trajectory of <u>every</u> agent in <u>every</u> run of the paper at <a class="ref" href={DATASET} target="_blank" rel="noopener">🤗 illuin/daedalus-traces</a>. Use them as you wish!
+    </p>
+  </section>
+
+  <section id="why">
+    <h2><span class="num">01</span><span class="text">Why agents need memory</span></h2>
+    <p>
+      LLM agents now carry out real tasks in complex environments, with little human guidance.
+      Doing so reliably takes practical knowledge that carries over from task to task: how the
+      tools behave, how the environment is organised. Without a memory of it, an agent
+      rediscovers its environment on every task, repeats the same mistakes, and needs longer,
+      costlier runs.
+    </p>
+    <p>
+      Memory methods fix this by learning from past attempts, without touching the model's
+      weights. But they learn from a <em>curated set of training tasks</em>, usually with
+      a <em>verifier</em> that scores each attempt. Building that supervision takes prior knowledge of
+      the environment and a lot of human work, so most environments don't have it, and ever
+      more of them are generated automatically. The alternative, learning from test queries as they
+      arrive, leaves the first tasks with no memory at all.
+    </p>
+    <p>
+      <strong>DAEDALUS removes both requirements.</strong> The agent practises before deployment,
+      on tasks it generates itself, and keeps only the lessons that demonstrably help it.
+    </p>
+    <Regimes />
+  </section>
+
+  <section id="pipeline">
+    <h2><span class="num">02</span><span class="text">How DAEDALUS builds its memory</span></h2>
+    <p>
+      Before deployment, DAEDALUS spends a fixed budget of practice sessions in the environment. In each one, an <strong>Explorer</strong> proposes a task with explicit
+      success conditions, and solves it itself to prove it feasible. A <strong>Solver</strong>,
+      the same model as the agent, then attempts it from a fresh state while an
+      LLM <strong>Judge</strong> checks each trajectory against the conditions. After every failure,
+      an <strong>Extractor</strong> writes a heuristic, or revises the last one, and the Solver
+      retries with it in context.
+    </p>
+    <p>
+      A heuristic is kept only once the Solver succeeds with it <em>three times in a row</em>.
+      A task the Solver never fails is too easy; one it keeps failing is too hard: either way,
+      the Explorer refines it, up to five times, which keeps tasks at the edge of what the
+      Solver can do. A <strong>Surveyor</strong> spreads the tasks over the environment
+      beforehand, lessons from each refinement become guidelines for the Explorer, and after
+      the last session a <strong>Consolidator</strong> merges the accepted heuristics into the
+      memory the agent receives at test time.
+    </p>
+    <p>
+      Apart from the Solver, all these agents are <strong>auxiliary agents</strong>: they build
+      the memory but are never deployed, so they can run a larger model than the agent.
+    </p>
+    <p>
+      Here is one real session of our AppWorld run, step by step.
+    </p>
+    <DiagramStyles />
+    <Pipeline />
+    <Takeaway>
+      <p>In DAEDALUS, a heuristic enters the memory only once the agent has succeeded with it three times in a row, on a task hard enough to have made it fail. It ensures that only useful and robust lessons are retained!</p>
+    </Takeaway>
+  </section>
+
+  <section id="example">
+    <h2><span class="num">03</span><span class="text">The memory at work</span></h2>
+    <p>
+      After the last session, the Consolidator merges the accepted heuristics into one memory, and
+      the agent receives it whole at the start of every test task. Here is what that changes on
+      one AppWorld test task, which the agent without memory never solves.
+    </p>
+    <MemoryExample />
+    <Takeaway>
+      <p>One heuristic, learned on generated tasks, turns a test task the agent never solves into one it solves in all five runs.</p>
+    </Takeaway>
+  </section>
+
+  <section id="results">
+    <h2><span class="num">04</span><span class="text">Results</span></h2>
+    <p>
+      One task shows the mechanism; the benchmarks show how far it carries. We compare DAEDALUS
+      with a no-memory baseline and six memory methods on three benchmarks:
+      app automation in code (<a class="ref" href={BENCH.appworld} target="_blank" rel="noopener">AppWorld</a>), customer service conversations (<a class="ref" href={BENCH.tau2} target="_blank" rel="noopener">τ²-bench</a>, retail) and
+      SaaS business workflows (<a class="ref" href={BENCH.ab} target="_blank" rel="noopener">AutomationBench</a>, Operations). Five of the methods learn from the
+      benchmark's training tasks, which DAEDALUS never sees; only <a class="ref" href={PAPERS.PREPING} target="_blank" rel="noopener">PREPING</a>, like DAEDALUS,
+      generates its own. The agent is GPT-5.4-mini, with GPT-5.4 for the auxiliary agents
+      (GPT-5.6 Luna and Terra on AutomationBench).
+    </p>
+    <ResultsTable />
+    <ul class="points">
+      <li><b>Best without training tasks.</b> +15.9, +10.0 and +4.3 MSR over no memory, pass^5 up to 2.2×, and ahead of PREPING everywhere.</li>
+      <li><b>Competitive with training tasks.</b> Within error of the best such method in four of the six MSR and pass^5 columns.</li>
+      <li><b>No extra inference cost</b> on AppWorld and τ²-bench: the agent needs fewer turns.</li>
+      <li><b>Self-generated tasks recover most of the benefit of curated ones.</b> Run on the training tasks, the same Solver loop (DAEDALUS-curated) ranks first; DAEDALUS is only 0.6, 2.5 and 4.0 MSR points behind it.</li>
+    </ul>
+    <Takeaway>
+      <p>Without any training task or verifier, DAEDALUS improves the agent on all three benchmarks, and beats the other method that needs neither.</p>
+      <p>Self-generated tasks recover most of the benefit of curated ones: the same loop run on the training tasks is only 0.6 to 4.0 points ahead.</p>
+    </Takeaway>
+  </section>
+
+  <section id="transfer">
+    <h2><span class="num">05</span><span class="text">Across model families</span></h2>
+    <p>
+      So far, the memory has been generated by the agent's own model family. Is it tied to the models
+      that generated it? We also run DAEDALUS with Qwen and DeepSeek model pairs, and give every
+      memory to every base agent.
+    </p>
+    <TransferMatrix />
+    <p>
+      All nine gains are positive. GPT-5.4-mini gains as much from the Qwen memory as from its own
+      (+16.8 vs. +15.9); DeepSeek-V4-Flash gains the least, from an 80.6% baseline that leaves
+      little room. With the GPT-5.4 memory, the seven base agents of fig. 1 all succeed more often, in fewer turns.
+    </p>
+    <Takeaway>
+      <p>A memory generated with one model family improves agents from the other families too.</p>
+    </Takeaway>
+  </section>
+
+  <section id="generation">
+    <h2><span class="num">06</span><span class="text">What makes generation work</span></h2>
+    <p>
+      Which parts of the pipeline make the memory work? A <strong>cumulative ablation</strong> on
+      AppWorld answers it: we rebuild the pipeline one component at a time, each row adding its
+      component to the previous one.
+    </p>
+    <Ablation />
+    <p>
+      Heuristics must come from the Solver's own attempts: exploring alone makes the agent worse
+      (A, B), Solver traces bring the first jump (C) and validating them the second (D). The
+      guidelines and the survey then make generation <em>cheaper</em> rather than better. With
+      fewer refinements, the Solver and the Judge cost 60% less, and the whole run costs half as much as (D).
+    </p>
+    <figure class="box chart-fig">
+      <span class="label"><b>fig. 5</b><span class="long"> generation cost by agent role</span></span>
+      <div id="cost-chart" class="chart chart-sm" role="img" aria-label="Stacked bars of generation cost by role for rows D, E and F: $210, $185 and $109."></div>
+      <ul class="keys" aria-label="Roles">
+        <li><i style="background:var(--role-explorer)"></i>explorer</li><li><i style="background:var(--role-solver)"></i>solver</li>
+        <li><i style="background:var(--role-judge)"></i>judge</li><li><i style="background:var(--role-extractor)"></i>extractor</li>
+      </ul>
+    </figure>
+    <Takeaway>
+      <p>Useful heuristics come from the agent's own failures, confirmed by its own successes: exploration alone makes the agent worse.</p>
+      <p>Guiding the Explorer with past lessons and a survey of the environment halves the cost of generation, at the same accuracy.</p>
+    </Takeaway>
+
+  </section>
+
+  <section id="inference">
+    <h2><span class="num">07</span><span class="text">Using the memory</span></h2>
+    <p>
+      Generating good heuristics is half of the story; the other half is how the agent receives
+      them. Heuristics accepted in different sessions overlap. Consolidated into one memory and injected
+      whole at task start, they are both the best and the cheapest option, 10.7 MSR points
+      above the raw heuristics. Retrieving five heuristics per turn helps less, and BM25,
+      embeddings and a random pick are all within error of each other. Retrieval ranks the
+      heuristics by their resemblance to the agent's current turn, but the heuristic the agent
+      needs often reads nothing like that turn: it warns about a mistake still to come, not
+      about what the agent is doing now.
+    </p>
+    <Injection />
+    <p>Retrieving more per turn helps, but never reaches the whole memory at start.</p>
+    <figure class="box chart-fig">
+      <span class="label"><b>fig. 6</b><span class="long"> retrieval per turn against the whole memory</span></span>
+      <div id="retrieval-chart" class="chart chart-sm" role="img" aria-label="Mean success rate and pass^5 against the number of heuristics retrieved per turn, below the dotted lines of the whole memory at start."></div>
+      <ul class="keys"><li><i style="background:var(--teal)"></i>mean success rate</li><li><i style="background:var(--orange)"></i>pass^5</li><li><i class="dot"></i>whole memory at start</li></ul>
+    </figure>
+    <Takeaway>
+      <p>Give the agent the whole consolidated memory at the start of the task: it beats per-turn retrieval, at the inference cost of no memory.</p>
+    </Takeaway>
+  </section>
+
+  <section id="ranking">
+    <h2><span class="num">08</span><span class="text">Ranking models with generated tasks</span></h2>
+    <p>
+      The generated tasks have a use of their own, beyond memory. Environments without training
+      tasks usually lack a test set as well, which makes it hard
+      to compare agents on them. The tasks DAEDALUS generates could fill that role.
+    </p>
+    <p>
+      To test it, we evaluate nine models, without memory, on two task sets:
+      the {figure.generated_tasks} tasks accepted during a 90-session generation run on AppWorld, and
+      AppWorld's official <code>test_normal</code> split. If the generated tasks are a good proxy,
+      the models should come out in the same order on both.
+    </p>
+
+    <figure class="box figure">
+      <span class="label"><b>fig. 7</b><span class="long"> generated tasks vs. AppWorld test_normal</span></span>
+      <div class="chart-wrap">
+        <div id="correlation-chart" class="chart" role="img"
+          aria-label={`Scatter plot of nine models: success on AppWorld test_normal against success on DAEDALUS-generated tasks, for mean success rate and pass cubed. Kendall's tau is ${tau(msr)} for both.`}></div>
+        <div class="stats in-plot">
+          <div><span class="swatch" style="color: var(--teal)">●</span> MSR   τ = {tau(msr)} (p &lt; .001) · {msr.concordant}/{msr.pairs} pairs agree</div>
+          <div><span class="swatch" style="color: var(--orange)">○</span> pass³ τ = {tau(pass3)} (p &lt; .001) · {pass3.concordant}/{pass3.pairs} pairs agree</div>
+        </div>
+      </div>
+      <ul class="legend" aria-label="Models">
+        {LEGEND_ORDER.map((id) => {
+          const shape = SHAPES[SYMBOLS[id]];
+          return (
+            <li data-model={id}>
+              <svg viewBox="-6.5 -6.5 13 13" aria-hidden="true">
+                <path d={shape.d} transform={shape.rotate ? `rotate(${shape.rotate})` : undefined} />
+              </svg>
+              {id}
+            </li>
+          );
+        })}
+      </ul>
+      <figcaption>
+        Each model appears twice: its mean success rate (MSR, filled) and its pass³ (hollow).
+        Hover or tap a model to single it out.
+      </figcaption>
+      <details class="table-view">
+        <summary>data table</summary>
+        <pre>{table}</pre>
+      </details>
+    </figure>
+
+    <p>
+      The rankings agree. Kendall's τ is <span class="teal">{tau(msr)}</span> for mean success
+      rate and <span class="orange">{tau(pass3)}</span> for pass³ (both p &lt; .001),
+      and {msr.concordant} of the {msr.pairs} pairs of models are ordered the same way on both sets.
+    </p>
+    <p>
+      Absolute scores differ: every model does better on the generated tasks, which were
+      calibrated to GPT-5.4-mini, the solver that generated them. But the order of models is
+      preserved, so tasks generated by DAEDALUS can serve as a proxy for ranking models when no
+      curated test set exists.
+    </p>
+    <Takeaway>
+      <p>Tasks generated by DAEDALUS rank models in the same order as AppWorld's official test set (Kendall's τ = {tau(msr)}).</p>
+    </Takeaway>
+  </section>
+
+  <section id="takeaways">
+    <h2><span class="num">09</span><span class="text">Key takeaways</span></h2>
+    <div class="box tldr">
+      <ul class="points">
+        <li><strong>No training tasks, no verifier.</strong> DAEDALUS builds an agent's memory from tasks it generates itself.</li>
+        <li><strong>Up to +15.9 points</strong> of mean success rate over no memory: the strongest method without training tasks, and competitive with those that learn from curated ones, at little or no extra inference cost.</li>
+        <li><strong>Validation is what works.</strong> Heuristics grounded in the agent's own failures and confirmed by its successes help; heuristics from exploration alone hurt.</li>
+        <li><strong>The memory transfers</strong> across model families.</li>
+        <li><strong>Give the whole memory at task start.</strong> Consolidated and injected once, it beats per-turn retrieval.</li>
+        <li><strong>The generated tasks rank models</strong> in the same order as AppWorld's official test set (τ = {tau(msr)}).</li>
+      </ul>
+    </div>
+
+    <nav class="resources" aria-label="Links">
+      {resources.map((r) => (
+        <a class="box resource" href={r.href} target="_blank" rel="noopener">
+          <span class="label"><b>{r.label}</b></span>
+          <span class="res-title">{r.logo && <img src={asset("illuin-logo.svg")} alt="" width="262" height="205" />}{r.logo ? <span class="rainbow">{illuinName.map((l) => <span style={l.color && `color:${l.color}`}>{l.ch}</span>)}</span> : r.title}</span>
+          <span class="res-url">{r.url} <span aria-hidden="true">↗</span></span>
+        </a>
+      ))}
+    </nav>
+  </section>
+
+  <section id="cite">
+    <h2><span class="num">@</span><span class="text">Citation</span></h2>
+    <p>If DAEDALUS, its code or its artefacts are useful to you, please cite:</p>
+    <figure class="box cite">
+      <span class="label"><b>bibtex</b></span>
+      <button type="button" class="cite-copy" data-copy="#bibtex">[copy]</button>
+      <pre id="bibtex">{bibtex}</pre>
+    </figure>
+  </section>
+
+  <section id="appendix">
+    <h2><span class="num">A</span><span class="text">Appendix</span></h2>
+    <details class="appendix">
+      <summary>three more analyses: the judge, the budget, the auxiliary model</summary>
+    <h3>Can the judge be trusted?</h3>
+    <p>
+      The loop rests on an LLM judge. It agrees substantially with each benchmark's own
+      verifier (κ &gt; 0.7), and five calls on the same trajectory agree with each other
+      (κ &gt; 0.8). Its precision beats its recall everywhere: it rejects some successes rather
+      than accepting failures, the safe side for accepting heuristics.
+    </p>
+    <SmallTables which="judge" />
+
+    <h3>How many sessions?</h3>
+    <p>
+      Five sessions already bring more than half of the gain of the 90-session peak, so a useful
+      memory is cheap. Past 90 sessions, success drops while the memory keeps growing.
+    </p>
+    <figure class="box chart-fig">
+      <span class="label"><b>fig. A1</b><span class="long"> scaling with the number of sessions</span></span>
+      <div id="sessions-chart" class="chart" role="img" aria-label="Mean success rate and pass^5 against the number of generation sessions, peaking at 90 sessions, with the memory size below."></div>
+      <ul class="keys"><li><i style="background:var(--teal)"></i>mean success rate</li><li><i style="background:var(--orange)"></i>pass^5</li><li><i style="background:var(--rule-strong)"></i>heuristics in memory</li></ul>
+      <figcaption>One generation run, evaluated at checkpoints; error bars are standard errors over five runs.</figcaption>
+    </figure>
+
+    <h3>Does it need a large model?</h3>
+    <p>
+      With GPT-5.4-mini for every auxiliary agent, the solver's own model, DAEDALUS still adds 6.9
+      MSR points: about half of the gain with GPT-5.4.
+    </p>
+    <SmallTables which="aux" />
+    </details>
+  </section>
+</Post>
+
+<script>
+  import "../scripts/correlation";
+  import "../scripts/stepper";
+  import "../scripts/charts";
+  import "../scripts/tables";
+</script>

@@ -1,0 +1,3 @@
+Before writing code, think carefully about what you need to do next. Analyze the current state and describe your plan. Do NOT write any code yet — only provide your reasoning.
+
+Thought:

@@ -1,0 +1,42 @@
+You are evaluating whether an agent completed a task. Judge by the EFFECTS visible
+in its trajectory — not by the agent's own claims, and not by demanding exhaustive
+proof of every detail.
+
+TASK:
+{{ instruction }}
+
+The task counts as COMPLETE only if all of these intended outcomes hold at the end:
+{% for c in success_conditions %}
+{{ loop.index }}. {{ c }}
+{% endfor %}
+
+AGENT TRAJECTORY (the actions it took — code, tool calls, and/or messages — and the observed results):
+
+{{ trajectory_text }}
+
+How to judge, outcome by outcome:
+- For each intended outcome above, decide from the trajectory whether it was
+  actually achieved.
+- Trust effects, not narration. A tool call that returns a success message
+  (optionally confirmed by a follow-up read) is sufficient evidence its effect
+  happened — you do NOT need every field re-printed. Conversely, the agent saying
+  "done" or otherwise signaling completion does NOT by itself prove anything.
+- An outcome is UNMET if the trajectory shows it was skipped, applied to the wrong
+  target or value, left an unresolved error, or only partially done.
+- If the task requires a factual answer, check that it was produced and is
+  consistent with the data actually observed in the trajectory.
+- Do NOT fail the task over incidental details you merely cannot see (e.g. that an
+  unrelated field stayed unchanged) once the required outcomes are clearly met.
+- When evidence is genuinely ambiguous but the agent's actions plausibly achieved
+  the outcome, give a competent solution the benefit of the doubt.
+- An outcome covering a GROUP ("every", "each", "all the ... that ...") is met only on
+  evidence about the whole group, not about the records the agent happened to handle.
+  A listing can come back partial and look complete, so N actions on one listing's N
+  results say nothing about the group's size. If the trajectory gives you no way to
+  establish that size, that outcome is UNMET — the benefit of the doubt above covers
+  ambiguous detail, never completeness.
+
+The task SUCCEEDS only if every intended outcome is met; otherwise it FAILS.
+
+Output STRICTLY one JSON object on a single line, no prose, no code fences:
+{"success": true or false, "reason": "<one short sentence naming the deciding factor>"}

@@ -1,0 +1,17 @@
+Here are the two previous trials to compare and critique:
+TRIAL TASK:
+{{ task }}
+
+SUCCESSFUL TRIAL:
+{{ success_history }}
+
+FAILED TRIAL:
+{{ fail_history }}
+
+Here are the EXISTING RULES:
+{{ existing_rules }}
+
+By examining and contrasting to the successful trial, and the list of existing rules, you can perform the following operations: add, edit, remove, or agree so that the new list of rules is GENERAL and HIGH LEVEL critiques of the failed trial or proposed way of Thought so they can be used to avoid similar failures when encountered with different questions in the future. Have an emphasis on critiquing how to perform better Thought and Action. Follow the below format:
+
+{{ format_rules_operation }}
+{{ critique_summary_suffix }}

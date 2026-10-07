@@ -1,0 +1,32 @@
+# Offline checks only. The smoke tests (tests/smoke_*.py) make paid LLM calls and need the
+# benchmark checkouts, so they are not run here.
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install uv && uv pip install --system -e ".[dev,plots]"
+      - run: python -m compileall -q daedalus references tests plots
+      - run: ruff check daedalus references tests plots
+      - name: Import every module that needs no benchmark extra
+        run: |
+          python - <<'PY'
+          import importlib, pkgutil, sys
+          import daedalus
+          failed = []
+          for mod in pkgutil.walk_packages(daedalus.__path__, "daedalus."):
+              if mod.name.startswith("daedalus.benchmarks."):
+                  continue  # needs the benchmark extras
+              try:
+                  importlib.import_module(mod.name)
+              except Exception as e:
+                  failed.append(f"{mod.name}: {type(e).__name__}: {e}")
+          print("\n".join(failed) or "all modules import")
+          sys.exit(1 if failed else 0)
+          PY
+      - run: pytest -q

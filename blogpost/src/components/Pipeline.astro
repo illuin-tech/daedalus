@@ -1,0 +1,54 @@
+---
+/**
+ * Fig. 3: the generation pipeline (paper Figures 2 and 3) as ASCII art, next to a log of one
+ * real session. Both advance together, one step at a time; see scripts/pipeline.ts.
+ *
+ * Every component keeps its colour from the paper's figures: a full-colour outline over a
+ * faint fill while it takes part in the current step, both fainter still otherwise. The step
+ * is written on the figure (`data-lit`, `data-flow`), and the rules below follow it.
+ */
+import diagram from "../data/pipeline-diagram.json";
+import DiagramArt from "./DiagramArt.astro";
+import { STEPS } from "../data/pipeline-steps";
+
+const num = (i: number) => String(i + 1).padStart(2, "0");
+
+---
+
+<figure class="box wide pipeline" data-stepper data-diagram data-steps={JSON.stringify(STEPS.map(({ lit, flow }) => ({ lit, flow })))}
+  tabindex="0" aria-label="Interactive walkthrough of one DAEDALUS generation session. Use the left and right arrow keys to change step.">
+  <span class="label"><b>fig. 3</b><span class="long"> one generation session, step by step</span></span>
+
+  <div class="pl-grid" style={`--chars:${diagram.width}`}>
+    <DiagramArt />
+
+    <div class="pl-text">
+      <div class="pl-now" aria-live="polite">
+        {STEPS.map((s, i) => (
+          <div class={i === 0 ? "pl-detail on" : "pl-detail"} data-detail={i}>
+            <div class="pl-detail-head"><span class="pl-num">{num(i)}</span> {s.actor} · {s.summary}</div>
+            <p set:html={s.detail} />
+          </div>
+        ))}
+      </div>
+      <ol class="pl-log">
+        {STEPS.map((s, i) => (
+          <li data-row={i}>
+            <button type="button" data-go={i}>
+              <span class="pl-num">{num(i)}</span><span class="pl-actor">{s.actor}</span><span class="pl-sum">{s.summary}</span>
+            </button>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+
+  <div class="pl-controls">
+    <button type="button" data-act="prev" aria-label="Previous step">◀ prev</button>
+    <button type="button" data-act="play" class="pl-play">▶ play</button>
+    <button type="button" data-act="next" aria-label="Next step">next ▶</button>
+    <span class="pl-count"><span data-count>01</span>/{String(STEPS.length).padStart(2, "0")}</span>
+    <span class="pl-keys">or ← → keys</span>
+    <span class="pl-bar" aria-hidden="true">{STEPS.map((_, i) => <button type="button" data-go={i} tabindex="-1">■</button>)}</span>
+  </div>
+</figure>

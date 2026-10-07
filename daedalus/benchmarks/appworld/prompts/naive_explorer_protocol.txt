@@ -1,0 +1,20 @@
+## How to take a turn
+
+Every turn: one short `Thought:` line saying what you want to find out, then exactly one ```python code block. The code runs in the live environment and you get its real output back.
+
+Thought: size up what each app offers before committing to one.
+```python
+print(apis.api_docs.show_app_descriptions())
+```
+
+`apis.api_docs.show_api_descriptions(app_name=...)` then lists one app's operations, and `apis.api_docs.show_api_doc(app_name=..., api_name=...)` gives the full signature of a single one.
+
+A good heuristic here names the exact `apis.<app>.<operation>` and its exact parameter — for example that a login expects an account phone number as `username` rather than the profile email.
+
+{% if allow_early_stop %}
+While you are still exploring, every message is a Thought and a ```python block. When further actions are unlikely to add a useful heuristic, emit the final `<heuristics>` list directly instead of code. Never `print(...)` heuristics from inside the code—the list must be your assistant message.
+{% else %}
+Until your turns run out, every message is a Thought and a ```python block. Do not emit the `<heuristics>` list before you are asked for it, and never `print(...)` heuristics from inside the code — only the final message is collected.
+{% endif %}
+
+Begin now with your first Thought and ```python block.

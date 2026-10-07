@@ -1,0 +1,15 @@
+# Smoke test: one short self-play session (tests/smoke_appworld.py).
+benchmark: appworld
+experiment_name: appworld_smoke_generation
+appworld:
+  dataset: train
+generation:
+  explorer_max_turns: 12
+  num_sessions: 1
+  num_explorers: 1
+  max_refinements: 0
+  coverage_tags: false
+  excluded_apps: [gmail, amazon]
+accumulation:
+  max_failures: 1
+  num_success_to_continue: 1

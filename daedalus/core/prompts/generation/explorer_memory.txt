@@ -1,0 +1,70 @@
+You maintain a list of guidelines for a task designer. The designer invents tasks
+in a live environment that are then attempted by a separate solver agent. A task
+is only useful if it is **challenging but solvable** — neither trivial (solved on
+the first attempt) nor impossible (never solved) — AND it must read like a natural
+request a real person would make, never a contrived puzzle. Your guidelines steer
+the designer toward that frontier WITHOUT sacrificing naturalness. Difficulty
+should come from genuine work (cross-referencing real data across tools, applications,
+or data areas, several real steps), never from artificial rules — so do NOT write guidelines
+that push invented metrics, multi-level tie-breakers, embedded lists, or other things a human
+would never say. Concrete, environment-specific guidelines are welcome when the
+evidence supports them.
+
+{% if task_guidelines %}
+The designer is ALREADY bound by the following rules about what a good task looks like in this
+environment. They are fixed. Your guidelines refine difficulty calibration WITHIN them and may
+never relax or contradict them — in particular, never write a guideline that tells the designer
+to name records the solver could find, to spell out the steps, to prefer an enumerated subset
+over "everything that matches", or to make the request longer. Nor may you discourage
+superlatives, universals, or relative time frames — that is how real requests are worded, and
+each buys a wide sweep in few words. When a task phrased that way came back too_easy, the slice
+behind it was too small or too clean; say that, never that the wording should change.
+
+--- fixed rules (not yours to change) ---
+{{ task_guidelines }}
+--- end fixed rules ---
+{% endif %}
+Current guidelines:
+{% if guidelines %}{% for g in guidelines %}- {{ g }}
+{% endfor %}{% else %}(none yet){% endif %}
+
+All tasks so far that were TOO EASY (solved on the first attempt):
+{% if too_easy %}{% for t in too_easy %}- {{ t }}
+{% endfor %}{% else %}(none yet){% endif %}
+
+All tasks so far that were TOO HARD (never solved):
+{% if too_hard %}{% for t in too_hard %}- {{ t }}
+{% endfor %}{% else %}(none yet){% endif %}
+
+This session's trajectory — the designer proposed a task, the solver attempted it,
+and (if it was off-target) the designer revised it up to several times. Each entry
+shows the task variant, how it turned out (too_easy / too_hard / banked = good
+difficulty), and the solver's trace. Study the PROGRESSION to learn what kind of
+change moved the difficulty in the right direction (or failed to):
+{% for a in attempts %}
+--- variant {{ loop.index }}: {{ a.result }} ---
+TASK: {{ a.task }}
+SOLVER TRACE:
+{{ a.trace or "(trace unavailable)" }}
+{% endfor %}
+
+Update the guideline list using the evidence above — especially how the difficulty
+changed across the variants. You may ADD a new guideline, MODIFY an existing one, or
+DELETE one that the evidence now contradicts. Keep guidelines that still hold.
+
+Maintain a COMPACT, curated playbook of DISTINCT, general design principles — it is
+the only difficulty signal the task designer sees, so keep it sharp. This is a curated
+set, NOT a running log: every guideline must earn its place, and the list must not grow
+without bound. Cover what makes a task too easy here, what makes one too hard, and the
+concrete design levers in between that raise difficulty *naturally*. Never
+suggest artificial difficulty. Each guideline is a GENERAL principle — concrete and specific about task
+*design* and *difficulty*, never referencing specific entities or values — not a
+session-specific observation.
+
+Before you output, CONSOLIDATE the list: merge any guidelines that express the same
+underlying principle into a single stronger one (keep the sharper wording, delete the
+rest), and fold a narrow lesson into the broader guideline it is an instance of. Prefer a
+short list of durable principles over many overlapping ones.
+
+Output ONLY the consolidated list — one guideline per line, most important first, no
+numbering, no prose, no markdown.

@@ -1,0 +1,12 @@
+# Paper: Figure 8 (Gemma-4-31B, no memory).
+# Output: outputs/inference/appworld/evaluation-proxy/no-memory_gemma-4-31b-it/
+benchmark: appworld
+experiment_name: no-memory_gemma-4-31b-it
+category: evaluation-proxy
+agent:
+  model: openrouter/google/gemma-4-31b-it
+appworld:
+  dataset: test_normal
+run:
+  num_runs: 5
+  parallel: 6

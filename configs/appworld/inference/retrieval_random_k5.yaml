@@ -1,0 +1,15 @@
+# Paper: Table 6 random.
+# Output: outputs/inference/appworld/memory-use/random_k5/
+benchmark: appworld
+experiment_name: random_k5
+category: memory-use
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld/consolidated_pool.json
+  retriever:
+    type: random
+run:
+  num_runs: 5
+  parallel: 40

@@ -1,0 +1,14 @@
+# Paper: Table 6 (dedup only).
+# Output: outputs/inference/appworld/memory-use/all-at-start_dedup/
+benchmark: appworld
+experiment_name: all-at-start_dedup
+category: memory-use
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld/dedup_pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 40

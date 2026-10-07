@@ -1,0 +1,14 @@
+# Paper: Table 1 DAEDALUS; Tables 3 (F), 6.
+# Output: outputs/inference/appworld/main-results/daedalus/
+benchmark: appworld
+experiment_name: daedalus
+category: main-results
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld/consolidated_pool.json
+  heuristics_at_start: true
+run:
+  num_runs: 5
+  parallel: 30

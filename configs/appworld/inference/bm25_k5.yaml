@@ -1,0 +1,13 @@
+# Paper: Figure 7; Tables 6, 9 BM25 / PRE-GEN.
+# Output: outputs/inference/appworld/memory-use/bm25_k5/
+benchmark: appworld
+experiment_name: bm25_k5
+category: memory-use
+appworld:
+  dataset: test_normal
+memory:
+  enabled: true
+  pool_path: outputs/daedalus/appworld/consolidated_pool.json
+run:
+  num_runs: 5
+  parallel: 40

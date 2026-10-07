@@ -1,0 +1,14 @@
+# Paper: Table 1, erl (tau2).
+# Output: outputs/baselines/erl/inference/tau2/
+benchmark: tau2
+experiment_name: tau2
+tau2:
+  task_split: test
+  solver_mode: conversational
+  max_steps: 200
+run:
+  num_runs: 5
+  parallel: 20
+kind: inference
+erl:
+  pool_path: outputs/baselines/erl/memory/tau2/pool.json

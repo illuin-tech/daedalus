@@ -1,0 +1,12 @@
+# Paper: Figure 1 (GPT-5.4-nano, no memory).
+# Output: outputs/inference/appworld/cross-family/no-memory_gpt-5.4-nano/
+benchmark: appworld
+experiment_name: no-memory_gpt-5.4-nano
+category: cross-family
+agent:
+  model: gpt-5.4-nano
+appworld:
+  dataset: test_normal
+run:
+  num_runs: 5
+  parallel: 30

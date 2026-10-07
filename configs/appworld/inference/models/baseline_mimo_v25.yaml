@@ -1,0 +1,12 @@
+# Paper: Figure 8 (MiMo-V2.5, no memory).
+# Output: outputs/inference/appworld/evaluation-proxy/no-memory_mimo-v2.5/
+benchmark: appworld
+experiment_name: no-memory_mimo-v2.5
+category: evaluation-proxy
+agent:
+  model: openrouter/xiaomi/mimo-v2.5
+appworld:
+  dataset: test_normal
+run:
+  num_runs: 5
+  parallel: 8

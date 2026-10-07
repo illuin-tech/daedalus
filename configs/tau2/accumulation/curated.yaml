@@ -1,0 +1,12 @@
+# Paper: Table 1 DAEDALUS-curated bank (τ²).
+# Output: outputs/daedalus-curated/tau2/
+benchmark: tau2
+experiment_name: tau2
+tau2:
+  task_split: train
+  solver_mode: conversational
+  max_steps: 200
+accumulation:
+  extraction_reasoning_effort: high
+run:
+  parallel: 30

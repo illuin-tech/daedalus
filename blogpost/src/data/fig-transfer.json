@@ -1,0 +1,199 @@
+{
+ "source": {
+  "script": "plots/scripts/transferability.py --benchmark appworld --split test_normal --pool outputs/generation/appworld_90sessions/consolidated_pool.json",
+  "outputs": [
+   "appworld_baseline",
+   "appworld_baseline_deepseek_v4_flash_0731_t30",
+   "appworld_baseline_glm_53_flash",
+   "appworld_baseline_gpt_5.4_nano",
+   "appworld_baseline_minimax_m27",
+   "appworld_baseline_nemotron35_lightning",
+   "appworld_baseline_qwen36_35b_a3b_parasail",
+   "appworld_generation_90_taskrealism_atstart",
+   "appworld_generation_90_taskrealism_atstart_glm_53_flash",
+   "appworld_generation_90_taskrealism_atstart_gpt_5.4_nano",
+   "appworld_generation_90_taskrealism_atstart_minimax_m27",
+   "appworld_gpt54bank_on_ds0731_t30",
+   "appworld_gpt54bank_on_nemotron35_lightning",
+   "appworld_gpt54bank_on_qwen36"
+  ]
+ },
+ "benchmark": "appworld",
+ "split": "test_normal",
+ "bank": "outputs/generation/appworld_90sessions/consolidated_pool.json",
+ "x": {
+  "label": "mean turns per task",
+  "range": [
+   6,
+   22
+  ]
+ },
+ "y": {
+  "label": "mean success rate",
+  "range": [
+   0,
+   100
+  ],
+  "unit": "%"
+ },
+ "legend": {
+  "hollow": "baseline",
+  "filled": "using Daedalus"
+ },
+ "models": [
+  {
+   "id": "gpt-5.4-mini",
+   "model": "gpt-5.4-mini",
+   "slot": 0,
+   "hue": "#8dd3c7",
+   "glyph": "v",
+   "base": {
+    "msr": 44.286,
+    "turns": 13.152,
+    "run": "appworld_baseline",
+    "n_runs": 5
+   },
+   "memory": {
+    "msr": 60.238,
+    "turns": 8.42,
+    "run": "appworld_generation_90_taskrealism_atstart",
+    "n_runs": 5,
+    "bank": "GPT-5.4 (appworld_90sessions)"
+   },
+   "delta_msr": 15.952,
+   "delta_turns": -4.732
+  },
+  {
+   "id": "gpt-5.4-nano",
+   "model": "gpt-5.4-nano",
+   "slot": 1,
+   "hue": "#bebada",
+   "glyph": "s",
+   "base": {
+    "msr": 14.881,
+    "turns": 20.355,
+    "run": "appworld_baseline_gpt_5.4_nano",
+    "n_runs": 5
+   },
+   "memory": {
+    "msr": 41.19,
+    "turns": 10.398,
+    "run": "appworld_generation_90_taskrealism_atstart_gpt_5.4_nano",
+    "n_runs": 5,
+    "bank": "GPT-5.4 (appworld_90sessions)"
+   },
+   "delta_msr": 26.31,
+   "delta_turns": -9.957
+  },
+  {
+   "id": "deepseek-v4-flash-0731",
+   "model": "openrouter/deepseek/deepseek-v4-flash-0731",
+   "slot": 2,
+   "hue": "#fb8072",
+   "glyph": "D",
+   "base": {
+    "msr": 80.595,
+    "turns": 15.783,
+    "run": "appworld_baseline_deepseek_v4_flash_0731_t30",
+    "n_runs": 5
+   },
+   "memory": {
+    "msr": 88.929,
+    "turns": 13.925,
+    "run": "appworld_gpt54bank_on_ds0731_t30",
+    "n_runs": 5,
+    "bank": "GPT-5.4 (appworld_90sessions)"
+   },
+   "delta_msr": 8.333,
+   "delta_turns": -1.858
+  },
+  {
+   "id": "minimax-m2.7",
+   "model": "openrouter/minimax/minimax-m2.7",
+   "slot": 3,
+   "hue": "#80b1d3",
+   "glyph": "^",
+   "base": {
+    "msr": 25.119,
+    "turns": 18.742,
+    "run": "appworld_baseline_minimax_m27",
+    "n_runs": 5
+   },
+   "memory": {
+    "msr": 43.81,
+    "turns": 15.986,
+    "run": "appworld_generation_90_taskrealism_atstart_minimax_m27",
+    "n_runs": 5,
+    "bank": "GPT-5.4 (appworld_90sessions)"
+   },
+   "delta_msr": 18.69,
+   "delta_turns": -2.756
+  },
+  {
+   "id": "nemotron-3.5-lightning",
+   "model": "openrouter/nvidia/nemotron-3.5-lightning",
+   "slot": 4,
+   "hue": "#fdb462",
+   "glyph": "o",
+   "base": {
+    "msr": 6.548,
+    "turns": 17.37,
+    "run": "appworld_baseline_nemotron35_lightning",
+    "n_runs": 5
+   },
+   "memory": {
+    "msr": 14.286,
+    "turns": 14.435,
+    "run": "appworld_gpt54bank_on_nemotron35_lightning",
+    "n_runs": 5,
+    "bank": "GPT-5.4 (appworld_90sessions)"
+   },
+   "delta_msr": 7.738,
+   "delta_turns": -2.936
+  },
+  {
+   "id": "qwen3.6-35b-a3b",
+   "model": "openrouter/qwen/qwen3.6-35b-a3b",
+   "slot": 5,
+   "hue": "#b3de69",
+   "glyph": "p",
+   "base": {
+    "msr": 44.762,
+    "turns": 19.224,
+    "run": "appworld_baseline_qwen36_35b_a3b_parasail",
+    "n_runs": 5
+   },
+   "memory": {
+    "msr": 60.833,
+    "turns": 17.501,
+    "run": "appworld_gpt54bank_on_qwen36",
+    "n_runs": 5,
+    "bank": "GPT-5.4 (appworld_90sessions)"
+   },
+   "delta_msr": 16.071,
+   "delta_turns": -1.723
+  },
+  {
+   "id": "glm-5.3-flash",
+   "model": "openrouter/z-ai/glm-5.3-flash",
+   "slot": 6,
+   "hue": "#fccde5",
+   "glyph": "h",
+   "base": {
+    "msr": 79.881,
+    "turns": 11.432,
+    "run": "appworld_baseline_glm_53_flash",
+    "n_runs": 5
+   },
+   "memory": {
+    "msr": 81.548,
+    "turns": 10.132,
+    "run": "appworld_generation_90_taskrealism_atstart_glm_53_flash",
+    "n_runs": 5,
+    "bank": "GPT-5.4 (appworld_90sessions)"
+   },
+   "delta_msr": 1.667,
+   "delta_turns": -1.3
+  }
+ ]
+}
