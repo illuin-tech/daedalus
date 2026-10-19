@@ -12,11 +12,19 @@ export interface Section {
 interface Props {
   title: string;
   description: string;
+  /** The social preview (Open Graph, X): a 1200×630 file of public/. */
+  image: string;
+  imageAlt: string;
   sections: Section[];
   links: { label: string; href: string }[];
 }
 
-const { title, description, sections, links } = Astro.props;
+const { title, description, image, imageAlt, sections, links } = Astro.props;
+// Absolute URLs, as search engines and link previews need them: the page's one address (with
+// its trailing slash, never /index.html) and the preview image.
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const canonical = new URL(base, Astro.site).href;
+const imageUrl = new URL(image, canonical).href;
 // Sections are numbered from 00 (the tl;dr).
 const num = (i: number) => String(i).padStart(2, "0");
 ---
@@ -29,6 +37,23 @@ const num = (i: number) => String(i).padStart(2, "0");
     <meta name="description" content={description} />
     <meta name="color-scheme" content="light dark" />
     <title>{title}</title>
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Illuin Technology" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+    <link rel="sitemap" href={`${base}sitemap.xml`} />
+    <slot name="head" />
     <link rel="icon" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/favicon.ico`} sizes="any" />
     <link rel="preload" href={regularFont} as="font" type="font/woff2" crossorigin />
     <script is:inline>

@@ -297,7 +297,11 @@ code { font: inherit; color: var(--orange-ink); }
   letter-spacing: 0.06em;
   font-weight: 700;
 }
+/* The subtitle is part of the h1 (the full title is what search engines read), styled as a line of its own. */
 .title .subtitle {
+  display: block;
+  font-weight: 400;
+  letter-spacing: normal;
   margin: 0.6rem 0 1.6rem;
   font-size: clamp(1.05rem, 2.6vw, 1.3rem);
   line-height: 1.4;

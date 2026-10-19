@@ -87,6 +87,33 @@ let letter = 0;
 const illuinName = [..."Illuin Technology"].map((ch) =>
   ch === " " ? { ch } : { ch, color: ILLUIN_COLORS[letter++ % ILLUIN_COLORS.length] });
 
+const TITLE = "DAEDALUS: Bootstrapping Agent Memory from Self-Generated Tasks";
+// What search engines show under the title: the method, its claim and the benchmarks (≤ 160 characters).
+const DESCRIPTION = "DAEDALUS bootstraps LLM agent memory from self-generated tasks, with no training tasks or verifier: up to +15.9 points on AppWorld, τ²-bench and AutomationBench.";
+const PUBLISHED = "2026-10-07";
+
+// schema.org metadata for search engines: the post, its authors, and the preprint it is based on.
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: TITLE,
+  description: DESCRIPTION,
+  image: new URL(asset("og-image.png"), Astro.site).href,
+  url: new URL(import.meta.env.BASE_URL.replace(/\/?$/, "/"), Astro.site).href,
+  datePublished: PUBLISHED,
+  inLanguage: "en",
+  keywords: ["LLM agents", "agent memory", "self-play", "self-generated tasks", "task generation",
+    "memory-augmented agents", "AppWorld", "τ²-bench", "AutomationBench"],
+  author: authors.map((a) => ({
+    "@type": "Person",
+    name: a.name,
+    sameAs: [a.linkedin, a.x].filter(Boolean),
+    affiliation: { "@type": "Organization", name: "Illuin Technology", url: ILLUIN },
+  })),
+  publisher: { "@type": "Organization", name: "Illuin Technology", url: ILLUIN, logo: new URL(asset("illuin-logo.svg"), Astro.site).href },
+  isBasedOn: { "@type": "ScholarlyArticle", name: TITLE, url: ARXIV },
+};
+
 const bibtex = `@misc{edy2026daedalus,
   title         = {{DAEDALUS}: Bootstrapping Agent Memory from Self-Generated Tasks},
   author        = {${authors.map((a) => { const w = a.name.split(" "); return `${w.at(-1)}, ${w.slice(0, -1).join(" ")}`; }).join(" and ")}},
@@ -113,16 +140,18 @@ const table = [header, "─".repeat(header.length), ...tableRows, "", "aw = AppW
 ---
 
 <Post
-  title="DAEDALUS: Bootstrapping Agent Memory from Self-Generated Tasks"
-  description="DAEDALUS builds reusable agent memory from self-generated tasks, without training tasks or an oracle verifier."
+  title={TITLE}
+  description={DESCRIPTION}
+  image="og-image.png"
+  imageAlt="DAEDALUS: Bootstrapping Agent Memory from Self-Generated Tasks. The title written as a maze, with the authors and Illuin Technology."
   sections={sections}
   links={links}
 >
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   <header slot="header" class="title">
     <Maze class="maze--wide" lines={["daedalus"]} seed={1937} />
     <Maze class="maze--narrow" lines={["daed", "alus"]} seed={1937} gates={[0, 14]} route={2.2} />
-    <h1>DAEDALUS</h1>
-    <p class="subtitle">Bootstrapping Agent Memory from Self-Generated Tasks</p>
+    <h1>DAEDALUS<span class="sr-only">: </span><span class="subtitle">Bootstrapping Agent Memory from Self-Generated Tasks</span></h1>
     <p class="authors">
       {authors.map((a, i) => (
         <>
